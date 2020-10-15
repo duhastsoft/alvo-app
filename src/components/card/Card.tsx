@@ -1,18 +1,31 @@
 import React from 'react';
-import { Image, ImageSourcePropType, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {
+  Image,
+  ImageSourcePropType,
+  StyleProp,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  ViewStyle,
+} from 'react-native';
 
 export interface CardProps {
   image: ImageSourcePropType;
   title: string;
   subtitle?: string;
-  style?: object;
+  style?: StyleProp<ViewStyle>;
   onPress?: () => void;
 }
 
 export default function Card(props: CardProps) {
   return (
-    <TouchableOpacity onPress={props.onPress} style={[{ ...props.style }]}>
-      <View style={styles.card}>
+    <TouchableOpacity
+      onPress={props.onPress}
+      style={[styles.card, props.style]}
+      activeOpacity={0.8}
+    >
+      <View style={{ alignItems: 'center' }}>
         <Image source={props.image} style={{ marginBottom: 16 }} />
         <Text style={styles.cardTitle}>{props.title.toUpperCase()}</Text>
       </View>
@@ -26,12 +39,10 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     backgroundColor: '#fff',
     elevation: 4,
-    alignItems: 'center',
   },
 
   cardTitle: {
     color: '#00848c',
-    fontWeight: 'bold',
     textAlign: 'center',
   },
 });

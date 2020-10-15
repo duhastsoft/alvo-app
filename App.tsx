@@ -1,6 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
+import Button, { ButtonTypes } from './src/components/buttons/Button';
 import Card from './src/components/card/Card';
 
 const options = [
@@ -36,6 +37,13 @@ export default function App() {
         ))}
       </View>
 
+      <Button
+        title="Prueba libre"
+        onPressEvent={() => alert('Prueba libre')}
+        style={{ width: '100%' }}
+        type={ButtonTypes.YELLOW}
+      />
+
       <StatusBar style="auto" />
     </View>
   );
@@ -54,6 +62,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     alignItems: 'center',
+    marginBottom: 16,
   },
 
   item: {
