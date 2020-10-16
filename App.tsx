@@ -45,10 +45,7 @@ function StackScreen() {
   return (
     <Stack.Navigator
       screenOptions={{
-        headerStyle: {
-          backgroundColor: '#f4511e',
-        },
-        headerTintColor: '#fff',
+        headerTintColor: 'gray',
         headerTitleStyle: {
           fontWeight: 'bold',
         },
@@ -57,14 +54,9 @@ function StackScreen() {
       <Stack.Screen
         name="Home"
         component={HomeScreen}
-        options={{ title: 'My home' }}
+        options={{ title: 'Alvo' }}
       />
-      <Stack.Screen
-        name="Home"
-        component={MapScreen}
-        options={{ title: 'My home' }}
-      />
-    </Stack.Navigator>
+      </Stack.Navigator>
   );
 }
 
@@ -72,7 +64,7 @@ export default function App() {
   return (
     <NavigationContainer>
       <Tab.Navigator
-      
+
         screenOptions={({ route }) => ({
           tabBarIcon: ({ focused, color, size }) => {
             let iconName;
@@ -95,7 +87,7 @@ export default function App() {
           inactiveTintColor: 'gray',
         }}
       >
-        <Tab.Screen name="Home" component={HomeScreen} />
+        <Tab.Screen name="Home" component={StackScreen} />
         <Tab.Screen name="Content" component={ContentScreen} />
         <Tab.Screen name="Directory" component={DirectoryScreen} />
         <Tab.Screen name="Escuelas" component={MapScreen} />
