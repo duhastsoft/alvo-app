@@ -4,6 +4,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
+import Home from './src/screens/Home';
 
 //Pantallas de prueba
 function HomeScreen() {
@@ -51,12 +52,8 @@ function StackScreen() {
         },
       }}
     >
-      <Stack.Screen
-        name="Home"
-        component={HomeScreen}
-        options={{ title: 'Alvo' }}
-      />
-      </Stack.Navigator>
+      <Stack.Screen name="Home" component={Home} options={{ title: 'Alvo' }} />
+    </Stack.Navigator>
   );
 }
 
@@ -64,7 +61,6 @@ export default function App() {
   return (
     <NavigationContainer>
       <Tab.Navigator
-
         screenOptions={({ route }) => ({
           tabBarIcon: ({ focused, color, size }) => {
             let iconName;
@@ -73,13 +69,20 @@ export default function App() {
               iconName = focused ? 'home-variant' : 'home-variant';
             } else if (route.name === 'Content') {
               iconName = focused ? 'book-open-page-variant' : 'book-open-page-variant';
-            }else if (route.name === 'Directory') {
+            } else if (route.name === 'Directory') {
               iconName = focused ? 'notebook' : 'notebook';
-            }else if (route.name === 'Escuelas') {
+            } else if (route.name === 'Escuelas') {
               iconName = focused ? 'map-search' : 'map-search';
             }
 
-            return <MaterialCommunityIcons containerStyle={{ marginTop: 2}} name={iconName} size={size} color={color} />;
+            return (
+              <MaterialCommunityIcons
+                containerStyle={{ marginTop: 2 }}
+                name={iconName}
+                size={size}
+                color={color}
+              />
+            );
           },
         })}
         tabBarOptions={{
