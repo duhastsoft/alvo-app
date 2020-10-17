@@ -29,6 +29,7 @@ export default function Home() {
       <View style={styles.row}>
         {options.map((option) => (
           <Card
+            key={option.title}
             image={option.image}
             title={option.title}
             style={styles.item}
