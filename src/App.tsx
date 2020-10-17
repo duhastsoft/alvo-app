@@ -4,7 +4,8 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
-import Home from './src/screens/Home';
+import Home from './screens/Home';
+import { registerRootComponent } from 'expo';
 
 //Pantallas de prueba
 function HomeScreen() {
@@ -57,13 +58,13 @@ function StackScreen() {
   );
 }
 
-export default function App() {
+function App() {
   return (
     <NavigationContainer>
       <Tab.Navigator
         screenOptions={({ route }) => ({
           tabBarIcon: ({ focused, color, size }) => {
-            let iconName;
+            let iconName = '';
 
             if (route.name === 'Home') {
               iconName = focused ? 'home-variant' : 'home-variant';
@@ -98,3 +99,5 @@ export default function App() {
     </NavigationContainer>
   );
 }
+
+export default registerRootComponent(App);

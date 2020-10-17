@@ -1,26 +1,18 @@
+import Button, { ButtonTypes } from '@/components/buttons/Button';
+import Card from '@/components/card/Card';
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
-import Button, { ButtonTypes } from '../components/buttons/Button';
-import Card from '../components/card/Card';
+import StopImage from '@/assets/images/stop-sign-1.png';
+import TireImage from '@/assets/images/tire-1.png';
+import BookImage from '@/assets/images/book-1.png';
+import ConeImage from '@/assets/images/cone-1.png';
 
 const options = [
-  {
-    image: require('../../assets/images/stop-sign-1.png'),
-    title: 'Señalización',
-  },
-  {
-    image: require('../../assets/images/tire-1.png'),
-    title: 'Ley de transporte',
-  },
-  {
-    image: require('../../assets/images/book-1.png'),
-    title: 'Reglamento General',
-  },
-  {
-    image: require('../../assets/images/cone-1.png'),
-    title: 'Examen VMT',
-  },
+  { image: StopImage, title: 'Señalización' },
+  { image: TireImage, title: 'Ley de transporte' },
+  { image: BookImage, title: 'Reglamento General' },
+  { image: ConeImage, title: 'Examen VMT' },
 ];
 
 export default function Home() {
