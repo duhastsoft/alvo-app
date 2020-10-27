@@ -59,6 +59,7 @@ function StackScreen() {
 }
 
 function App() {
+  Axios.defaults.baseURL = 'http://192.168.0.6:8080/api/v1';
   return (
     <NavigationContainer>
       <Tab.Navigator

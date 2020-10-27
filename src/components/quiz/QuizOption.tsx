@@ -40,5 +40,6 @@ const styles = StyleSheet.create({
   optionText: {
     fontSize: 20,
     marginLeft: 16,
+    flex: 1,
   },
 });
