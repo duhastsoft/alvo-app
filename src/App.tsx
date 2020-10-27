@@ -6,6 +6,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
 import Home from './screens/Home';
 import { registerRootComponent } from 'expo';
+import Directory from './screens/Directory';
 
 //Pantallas de prueba
 function HomeScreen() {
@@ -26,9 +27,16 @@ function MapScreen() {
 
 function DirectoryScreen() {
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>Directorio</Text>
-    </View>
+    <Stack.Navigator
+      screenOptions={{
+        headerTintColor: 'gray',
+        headerTitleStyle: {
+          fontWeight: 'bold',
+        },
+      }}
+    >
+      <Stack.Screen name="Directory" component={Directory} options={{ title: 'Alvo' }} />
+    </Stack.Navigator>
   );
 }
 
@@ -64,18 +72,7 @@ function App() {
       <Tab.Navigator
         screenOptions={({ route }) => ({
           tabBarIcon: ({ focused, color, size }) => {
-            let iconName = '';
-
-            if (route.name === 'Home') {
-              iconName = focused ? 'home-variant' : 'home-variant';
-            } else if (route.name === 'Content') {
-              iconName = focused ? 'book-open-page-variant' : 'book-open-page-variant';
-            } else if (route.name === 'Directory') {
-              iconName = focused ? 'notebook' : 'notebook';
-            } else if (route.name === 'Escuelas') {
-              iconName = focused ? 'map-search' : 'map-search';
-            }
-
+            const iconName = selectIcon(focused, route.name);
             return (
               <MaterialCommunityIcons
                 containerStyle={{ marginTop: 2 }}
@@ -98,6 +95,21 @@ function App() {
       </Tab.Navigator>
     </NavigationContainer>
   );
+
+  function selectIcon (focused: boolean, iconName: string){
+    switch(iconName){
+      case 'Home':
+        return focused ? 'home-variant' : 'home-variant';
+      case 'Content':
+        return focused ? 'book-open-page-variant' : 'book-open-page-variant';
+      case 'Directory':
+        return focused ? 'notebook' : 'notebook';
+      case 'Escuelas':
+        return focused ? 'map-search' : 'map-search';
+      default:
+        return focused ? 'home-variant' : 'home-variant';
+    }
+  }
 }
 
 export default registerRootComponent(App);
