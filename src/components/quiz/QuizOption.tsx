@@ -11,7 +11,7 @@ export default function QuizOption(props: QuizOptionProps) {
   const asciiCodeA = 'A'.charCodeAt(0);
   const optionLetter = String.fromCharCode(asciiCodeA + props.answerIndex);
   return (
-    <View style={[styles.container, { marginTop: props.answerIndex === 0 ? 0 : 20 }]}>
+    <View style={styles.container}>
       <Text style={styles.optionLetter}>{optionLetter}</Text>
       <Text style={styles.optionText}>{props.answerText}</Text>
     </View>
@@ -27,13 +27,14 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     flexDirection: 'row',
     alignItems: 'center',
+    marginHorizontal: 12,
+    marginBottom: 20,
   },
 
   optionLetter: {
     color: '#00848C',
-    fontWeight: 'bold',
     fontSize: 20,
-    marginHorizontal: 8,
+    marginLeft: 8,
   },
 
   optionText: {
