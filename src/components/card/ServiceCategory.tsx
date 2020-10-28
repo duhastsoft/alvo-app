@@ -1,29 +1,43 @@
 import React from "react";
 import { TouchableOpacity, Image, Text, View, StyleSheet, ViewStyle, StyleProp, ImageSourcePropType } from "react-native";
+import { StackNavigationProp } from '@react-navigation/stack';
 
 
 export interface CardCategoryProps {
+    index: number,
     image: ImageSourcePropType;
     name: string;
-    style?: StyleProp<ViewStyle>;
-}
+    style?: StyleProp<ViewStyle>,
+    navigation: StackNavigationProp<any>;
+}   
 
-export default function ServiceCategory(props: CardCategoryProps){
-    return(
-        <TouchableOpacity
-        onPress={()=>{alert('Dont touch me')}}
-        style={[styles.card, props.style]}
-        activeOpacity={0.8}>
-            <View style={styles.cardContent}>
-                <Image
-                style={styles.cardImage} 
-                resizeMode="cover"
-                source={props.image}
-                />
-                <Text style={styles.cardTitle}>{props.name}</Text>
-            </View>
-        </TouchableOpacity>
-    )
+export default class ServiceCategory extends React.Component<CardCategoryProps>{
+    constructor(props: CardCategoryProps){
+        super(props);
+    }
+    buttonPress (indexS: number){
+        this.props.navigation.navigate('Home', {index: indexS})
+    }
+    
+    render(){
+        console.log(this.props);
+        return(
+            <TouchableOpacity
+            style={[styles.card, this.props.style]}
+            onPress={()=>this.buttonPress(this.props.index)}
+            activeOpacity={0.8}
+            >
+                <View style={styles.cardContent}>
+                    <Image
+                    style={styles.cardImage} 
+                    resizeMode="cover"
+                    source={this.props.image}
+                    />
+                    <Text style={styles.cardTitle}>{this.props.name}</Text>
+                </View>
+            </TouchableOpacity>
+        )
+    }
 }
 
 const styles = StyleSheet.create({

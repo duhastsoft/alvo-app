@@ -4,19 +4,21 @@ import {ActivityIndicator, View, StyleSheet, ImageSourcePropType, SafeAreaView, 
 import {SearchBar} from 'react-native-elements';
 import { StatusBar } from 'expo-status-bar';
 import BookMarkImage from '@/assets/images/bookmark-1.png';
+import Axios from 'axios';
+import { StackNavigationProp } from '@react-navigation/stack';
 
 const bookmark = BookMarkImage;
 
-export interface Category {
+
+interface Category {
     image: ImageSourcePropType;
     name: string;
     id: number;
+    navigation: StackNavigationProp<any>;
 }
-declare const category: Category;
 
-
-export default class Directory extends React.Component{
-    state = { 
+export default class Directory extends React.Component<Category>{
+    state = {
         isLoading: true, 
         search: '', 
         categories: [{
@@ -28,7 +30,7 @@ export default class Directory extends React.Component{
     };
 
     SearchFilterFunction(text: string) {
-        const newData = this.state.dataSoruce.filter(function(item) {
+            const newData = this.state.dataSoruce.filter(function(item) {
           const itemData = item.name ? item.name.toUpperCase() : ''.toUpperCase();
           const textData = text.toUpperCase();
           return itemData.indexOf(textData) > -1;
@@ -40,12 +42,9 @@ export default class Directory extends React.Component{
       }
 
     componentDidMount(){
-        fetch('http://192.168.56.1:8080/api/v1/service-category/all')
-        .then(response => {
-            return response.json();
-          })
-          .then(myJson => {
-            const newCategories = myJson.data.map((e: Category)=>{
+        Axios.get('/service-category/all', { params: { limit: 5 } })
+        .then(myJson => {
+            const newCategories = myJson.data.data.map((e: Category)=>{
                 const formal = e.name.charAt(0).toUpperCase() + e.name.slice(1);
                 return  {
                     image: BookMarkImage,
@@ -57,8 +56,6 @@ export default class Directory extends React.Component{
             this.state.dataSoruce = categories;
             this.setState({
                 categories});
-            
-            
         }).catch(err=>{
             console.log(err);
         }).finally(()=>{
@@ -66,7 +63,6 @@ export default class Directory extends React.Component{
         });
     }
     render(){
-        
         if(this.state.isLoading){
             return(
                 <View style={{ flex: 1, paddingTop: 20 }}>
@@ -85,7 +81,13 @@ export default class Directory extends React.Component{
             />
             <ScrollView style={styles.row}>
             {
-                this.state.categories.map((option)=>(<ServiceCategory key={option.id} image={option.image} name={option.name}></ServiceCategory>))
+                
+                this.state.categories.map((option)=>(<ServiceCategory
+                    index={option.id} 
+                    key={option.id} 
+                    image={option.image} 
+                    name={option.name}
+                    navigation={this.props.navigation}/>))
             }
             </ScrollView>
         <StatusBar style="auto" />

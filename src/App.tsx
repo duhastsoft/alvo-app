@@ -3,10 +3,11 @@ import { Text, View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, StackActions } from '@react-navigation/native';
 import Home from './screens/Home';
 import { registerRootComponent } from 'expo';
 import Directory from './screens/Directory';
+import Axios from 'axios';
 
 //Pantallas de prueba
 function HomeScreen() {
@@ -35,7 +36,8 @@ function DirectoryScreen() {
         },
       }}
     >
-      <Stack.Screen name="Directory" component={Directory} options={{ title: 'Servicios' }} />
+      <Stack.Screen name="Directory" component={Directory} options={{ title: 'Directorio de servicios' }} />
+      <Stack.Screen name="Services" component={Directory} options={{ title: 'Servicios' }} />
     </Stack.Navigator>
   );
 }
@@ -67,6 +69,7 @@ function StackScreen() {
 }
 
 function App() {
+  Axios.defaults.baseURL = 'http://192.168.56.1:8080/api/v1';
   return (
     <NavigationContainer>
       <Tab.Navigator
