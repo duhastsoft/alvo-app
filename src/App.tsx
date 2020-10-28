@@ -35,7 +35,7 @@ function DirectoryScreen() {
         },
       }}
     >
-      <Stack.Screen name="Directory" component={Directory} options={{ title: 'Alvo' }} />
+      <Stack.Screen name="Directory" component={Directory} options={{ title: 'Servicios' }} />
     </Stack.Navigator>
   );
 }

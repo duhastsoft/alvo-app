@@ -33,7 +33,6 @@ export default class Directory extends React.Component{
           const textData = text.toUpperCase();
           return itemData.indexOf(textData) > -1;
         });
-    
         this.setState({
             categories: newData,
             search: text
@@ -41,15 +40,16 @@ export default class Directory extends React.Component{
       }
 
     componentDidMount(){
-        fetch('http://localhost:8080/api/v1/service-category/all')
+        fetch('http://192.168.56.1:8080/api/v1/service-category/all')
         .then(response => {
             return response.json();
           })
           .then(myJson => {
             const newCategories = myJson.data.map((e: Category)=>{
+                const formal = e.name.charAt(0).toUpperCase() + e.name.slice(1);
                 return  {
                     image: BookMarkImage,
-                    name: e.name,
+                    name: formal,
                     id: e.id
                 } as Category
             });
@@ -59,6 +59,8 @@ export default class Directory extends React.Component{
                 categories});
             
             
+        }).catch(err=>{
+            console.log(err);
         }).finally(()=>{
             this.setState({isLoading:false})
         });
@@ -78,7 +80,7 @@ export default class Directory extends React.Component{
             round
             searchIcon={{ size: 24 }}
             onChangeText={text => this.SearchFilterFunction(text)}
-            placeholder="Type Here..."
+            placeholder="Busca aqui..."
             value={this.state.search}
             />
             <ScrollView style={styles.row}>
@@ -94,7 +96,7 @@ export default class Directory extends React.Component{
 
 const styles = StyleSheet.create({
     searchBar:{
-        width: '100%'
+        width: '100%',
     },
     row: {
         width: '100%',
@@ -103,10 +105,9 @@ const styles = StyleSheet.create({
       },
     container: {
       flex: 1,
-      padding: 16,
     },
     cardTitle: {
-        color: '#FFFFF',
+        color: '#000000',
         textAlign: 'center',
         fontSize: 24
     }

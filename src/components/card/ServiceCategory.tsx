@@ -29,8 +29,7 @@ export default function ServiceCategory(props: CardCategoryProps){
 const styles = StyleSheet.create({
     card: {
       padding: 16,
-      borderRadius: 10,
-      backgroundColor: '#fff',
+      backgroundColor: '#f0ffff',
       width: '100%',
       elevation: 8,
     },
@@ -42,7 +41,9 @@ const styles = StyleSheet.create({
     },
     cardImage: {
         padding: 8,
-        marginEnd: 16
+        marginEnd: 16,
+        maxWidth:24,
+        maxHeight: 24
     },
     cardContent:{
         display: "flex", 
