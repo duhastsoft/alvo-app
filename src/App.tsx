@@ -6,6 +6,8 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
 import Home from './screens/Home';
 import { registerRootComponent } from 'expo';
+import QuizScreen from './screens/QuizScreen';
+import Axios from 'axios';
 
 //Pantallas de prueba
 function HomeScreen() {
@@ -53,7 +55,7 @@ function StackScreen() {
         },
       }}
     >
-      <Stack.Screen name="Home" component={Home} options={{ title: 'Alvo' }} />
+      <Stack.Screen name="Home" component={QuizScreen} options={{ title: 'Alvo' }} />
     </Stack.Navigator>
   );
 }

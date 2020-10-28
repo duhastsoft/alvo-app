@@ -1,5 +1,4 @@
 import Button, { ButtonTypes } from '@/components/buttons/Button';
-import QuizOption from '@/components/quiz/QuizOption';
 import QuizOptions from '@/components/quiz/QuizOptions';
 import QuizQuestion from '@/components/quiz/QuizQuestion';
 import Axios from 'axios';
@@ -20,15 +19,20 @@ interface Question {
 interface QuizState {
   loading: boolean;
   counter: number;
+  selectedIndex: number;
+  selectedAnswer: number;
+  answerConfirmed: boolean;
   questions?: Question[];
 }
 
-const question = `La infracción de Tránsito y seguridad vial siguiente: "Estacionarse en zona prohibida o eje preferencial" será sancionada con una multa de:`;
-const image = `https://images.vexels.com/media/users/3/143473/isolated/preview/6a4a5a7dd733d452adfd328c32f50d3e-icono-de-se--al-de-stop-mano-by-vexels.png`;
-const options = ['¢300.00 o $34.29', '¢100.00 o $11.43', '¢25.00 o $2.86', '¢500.00 o $57.14'];
-
-export default class QuizScreen extends Component {
-  state: QuizState = { loading: true, counter: 0 };
+export default class QuizScreen extends Component<{}, QuizState> {
+  state: QuizState = {
+    loading: true,
+    counter: 0,
+    selectedIndex: -1,
+    selectedAnswer: -1,
+    answerConfirmed: false,
+  };
 
   get currentQuestion() {
     return this.state.questions![this.state.counter];
@@ -44,6 +48,27 @@ export default class QuizScreen extends Component {
       console.log(err);
     }
   }
+
+  onAnswerPressHandler = (index: number, answer: number) => {
+    if (!this.state.answerConfirmed) {
+      this.setState({ selectedIndex: index, selectedAnswer: answer });
+    }
+  };
+
+  nextQuestionHandler = () => {
+    if (this.state.answerConfirmed) {
+      if (this.state.counter < this.state.questions!.length - 1) {
+        this.setState((prevState) => ({
+          counter: prevState.counter + 1,
+          selectedAnswer: -1,
+          selectedIndex: -1,
+          answerConfirmed: false,
+        }));
+      } else alert('Examen finalizado');
+    } else {
+      this.setState({ answerConfirmed: true });
+    }
+  };
 
   renderQuestion = () => {
     if (this.state.loading) {
@@ -68,7 +93,12 @@ export default class QuizScreen extends Component {
               this.currentQuestion.answer3,
               this.currentQuestion.answer4,
             ]}
+            confirmed={this.state.answerConfirmed}
             questionHasImage={!!this.currentQuestion.image}
+            questionNumber={this.state.counter}
+            rightAnswer={this.currentQuestion.rightAnswer}
+            selectedOption={this.state.selectedIndex}
+            onSelect={this.onAnswerPressHandler}
           />
         </ScrollView>
       );
@@ -81,8 +111,8 @@ export default class QuizScreen extends Component {
         {this.renderQuestion()}
         <Button
           type={ButtonTypes.YELLOW}
-          title="Siguiente"
-          onPressEvent={() => alert('Pressed siguiente')}
+          title={this.state.answerConfirmed ? 'Siguiente' : 'Confirmar respuesta'}
+          onPressEvent={this.nextQuestionHandler}
         />
       </View>
     );

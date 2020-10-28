@@ -1,25 +1,41 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View } from 'react-native';
 import QuizOption from './QuizOption';
 
 interface QuizOptionsProps {
+  questionNumber: number;
   answers: string[];
   questionHasImage: boolean;
+  selectedOption: number;
+  confirmed: boolean;
+  rightAnswer: number;
+  onSelect: (index: number, answer: number) => void;
 }
 
 export default function QuizOptions(props: QuizOptionsProps) {
-  const shuffledIndexes = shuffleAnswers([0, 1, 2, 3]);
+  const [shuffledIndexes, setShuffledIndexes] = useState(Array<number>());
+  useEffect(() => {
+    setShuffledIndexes(shuffleAnswers([1, 2, 3, 4]));
+  }, [props.questionNumber]);
 
   return (
     <View style={{ flex: 1, marginTop: props.questionHasImage ? 8 : 24 }}>
-      {shuffledIndexes.map((position, index) => (
-        <QuizOption
-          key={`option${index}`}
-          answerNumber={position + 1}
-          answerIndex={index}
-          answerText={props.answers[position]}
-        />
-      ))}
+      {shuffledIndexes.map((position, index) => {
+        return (
+          <QuizOption
+            key={`option${index}`}
+            answerNumber={position}
+            answerIndex={index}
+            answerText={props.answers[position - 1]}
+            selected={props.selectedOption === index}
+            correct={props.confirmed && props.rightAnswer === position}
+            incorrect={
+              props.confirmed && props.selectedOption === index && props.rightAnswer !== position
+            }
+            onPress={() => props.onSelect(index, position)}
+          />
+        );
+      })}
     </View>
   );
 }
