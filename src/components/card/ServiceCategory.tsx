@@ -20,7 +20,6 @@ export default class ServiceCategory extends React.Component<CardCategoryProps>{
     }
     
     render(){
-        console.log(this.props);
         return(
             <TouchableOpacity
             style={[styles.card, this.props.style]}
