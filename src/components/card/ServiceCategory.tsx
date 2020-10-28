@@ -4,7 +4,7 @@ import { TouchableOpacity, Image, Text, View, StyleSheet, ViewStyle, StyleProp, 
 
 export interface CardCategoryProps {
     image: ImageSourcePropType;
-    title: string;
+    name: string;
     style?: StyleProp<ViewStyle>;
 }
 
@@ -20,7 +20,7 @@ export default function ServiceCategory(props: CardCategoryProps){
                 resizeMode="cover"
                 source={props.image}
                 />
-                <Text style={styles.cardTitle}>{props.title}</Text>
+                <Text style={styles.cardTitle}>{props.name}</Text>
             </View>
         </TouchableOpacity>
     )

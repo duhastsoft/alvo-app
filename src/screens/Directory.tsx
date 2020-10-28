@@ -9,7 +9,7 @@ const bookmark = BookMarkImage;
 
 export interface Category {
     image: ImageSourcePropType;
-    title: string;
+    name: string;
     id: number;
 }
 declare const category: Category;
@@ -21,12 +21,47 @@ export default class Directory extends React.Component{
         search: '', 
         categories: [{
             image: BookMarkImage,
-            title: 'All categories',
+            name: 'Todas las categorias',
             id: 0
-        }] as Category[]
+        }] as Category[],
+        dataSoruce: [] as Category[]
     };
+
+    SearchFilterFunction(text: string) {
+        const newData = this.state.dataSoruce.filter(function(item) {
+          const itemData = item.name ? item.name.toUpperCase() : ''.toUpperCase();
+          const textData = text.toUpperCase();
+          return itemData.indexOf(textData) > -1;
+        });
+    
+        this.setState({
+            categories: newData,
+            search: text
+        });
+      }
+
     componentDidMount(){
-        this.setState({isLoading:false});
+        fetch('http://localhost:8080/api/v1/service-category/all')
+        .then(response => {
+            return response.json();
+          })
+          .then(myJson => {
+            const newCategories = myJson.data.map((e: Category)=>{
+                return  {
+                    image: BookMarkImage,
+                    name: e.name,
+                    id: e.id
+                } as Category
+            });
+            const categories = [...this.state.categories].concat(newCategories);
+            this.state.dataSoruce = categories;
+            this.setState({
+                categories});
+            
+            
+        }).finally(()=>{
+            this.setState({isLoading:false})
+        });
     }
     render(){
         
@@ -39,10 +74,16 @@ export default class Directory extends React.Component{
         }
        return(
         <SafeAreaView style={styles.container} >
-            <SearchBar style={styles.searchBar}/>
+            <SearchBar style={styles.searchBar}
+            round
+            searchIcon={{ size: 24 }}
+            onChangeText={text => this.SearchFilterFunction(text)}
+            placeholder="Type Here..."
+            value={this.state.search}
+            />
             <ScrollView style={styles.row}>
             {
-                this.state.categories.map((option)=>(<ServiceCategory key={option.id} image={option.image} title={option.title}></ServiceCategory>))
+                this.state.categories.map((option)=>(<ServiceCategory key={option.id} image={option.image} name={option.name}></ServiceCategory>))
             }
             </ScrollView>
         <StatusBar style="auto" />
