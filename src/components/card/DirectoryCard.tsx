@@ -8,7 +8,7 @@ export interface CardCategoryProps {
     image: ImageSourcePropType;
     name: string;
     style?: StyleProp<ViewStyle>,
-    navigation: StackNavigationProp<any>;
+    onPress: (index: number) => void;
 }   
 
 export default class ServiceCategory extends React.Component<CardCategoryProps>{
@@ -16,7 +16,7 @@ export default class ServiceCategory extends React.Component<CardCategoryProps>{
         super(props);
     }
     buttonPress (indexS: number){
-        this.props.navigation.navigate('Home', {index: indexS})
+        this.props.onPress(indexS);
     }
     
     render(){

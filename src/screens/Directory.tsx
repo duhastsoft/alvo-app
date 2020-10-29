@@ -1,36 +1,67 @@
-import ServiceCategory from '@/components/card/ServiceCategory';
 import React from 'react';
-import {ActivityIndicator, View, StyleSheet, ImageSourcePropType, SafeAreaView, ScrollView} from 'react-native';
-import {SearchBar} from 'react-native-elements';
+import {ActivityIndicator, View, StyleSheet, ImageSourcePropType, SafeAreaView, BackHandler} from 'react-native';
+import {Icon, SearchBar} from 'react-native-elements';
 import { StatusBar } from 'expo-status-bar';
 import BookMarkImage from '@/assets/images/bookmark-1.png';
+import CustomerSupport from '@/assets/images/customer-support-1.png';
 import Axios from 'axios';
-import { StackNavigationProp } from '@react-navigation/stack';
-
-const bookmark = BookMarkImage;
+import DirectoryScroll from '@/components/scroll-views/DirectoryScroll';
 
 
-interface Category {
+interface ListItem {
     image: ImageSourcePropType;
     name: string;
     id: number;
-    navigation: StackNavigationProp<any>;
 }
 
-export default class Directory extends React.Component<Category>{
+const defaultCategory: ListItem = {
+    image: BookMarkImage,
+    name: 'Todas las categorias',
+    id: 0
+}
+
+export default class Directory extends React.Component{
+    constructor(props: {}){
+        super(props);
+        this.selectCategory = this.selectCategory.bind(this);
+        this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
+    }
+
     state = {
         isLoading: true, 
         search: '', 
-        categories: [{
-            image: BookMarkImage,
-            name: 'Todas las categorias',
-            id: 0
-        }] as Category[],
-        dataSoruce: [] as Category[]
+        section: 1,
+        target: 0,
+        categories: [defaultCategory] as ListItem[],
+        dataSoruce: [] as ListItem[]
     };
 
+
+    handleBackButtonClick() {
+        this.setState({
+            target: 0,
+            section: 1,
+            isLoading: false,
+            categories: [defaultCategory]
+        }, () =>this.loadContent());
+        return true;
+    }
+
+    selectCategory (target: number){
+        const recived = target;
+        this.setState({
+            target: recived,
+            section: 2,
+            isLoading: false,
+            categories: []
+        }, () =>this.loadContent());
+    }
+    selectService(target: number){
+
+    }
+
     SearchFilterFunction(text: string) {
-            const newData = this.state.dataSoruce.filter(function(item) {
+        const newData = this.state.dataSoruce.filter(function(item) {
           const itemData = item.name ? item.name.toUpperCase() : ''.toUpperCase();
           const textData = text.toUpperCase();
           return itemData.indexOf(textData) > -1;
@@ -39,18 +70,24 @@ export default class Directory extends React.Component<Category>{
             categories: newData,
             search: text
         });
-      }
+    }
 
-    componentDidMount(){
-        Axios.get('/service-category/all', { params: { limit: 5 } })
+    
+
+    loadContent(){
+        const base = (this.state.section==1) ? '/service-category/all':  '/service';
+        const target = (this.state.section==2) ? 
+        (this.state.target==0)? '/all' :'/'+this.state.target 
+        : '' ;
+        const request = base + target;
+        Axios.get(request, { params: { limit: 5 } })
         .then(myJson => {
-            const newCategories = myJson.data.data.map((e: Category)=>{
+            const newCategories = myJson.data.data.map((e: ListItem)=>{
                 const formal = e.name.charAt(0).toUpperCase() + e.name.slice(1);
                 return  {
-                    image: BookMarkImage,
                     name: formal,
                     id: e.id
-                } as Category
+                } as ListItem
             });
             const categories = [...this.state.categories].concat(newCategories);
             this.state.dataSoruce = categories;
@@ -62,7 +99,18 @@ export default class Directory extends React.Component<Category>{
             this.setState({isLoading:false})
         });
     }
+
+    componentDidMount(){
+        BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
+        this.loadContent();
+    }
+
+    componentWillUnmount(){
+        BackHandler.removeEventListener('hardwareBackPress', this.handleBackButtonClick);
+    }
+
     render(){
+        const target = 'Service';
         if(this.state.isLoading){
             return(
                 <View style={{ flex: 1, paddingTop: 20 }}>
@@ -70,26 +118,24 @@ export default class Directory extends React.Component<Category>{
                 </View>
             )
         }
+
        return(
         <SafeAreaView style={styles.container} >
-            <SearchBar style={styles.searchBar}
-            round
-            searchIcon={{ size: 24 }}
-            onChangeText={text => this.SearchFilterFunction(text)}
-            placeholder="Busca aqui..."
-            value={this.state.search}
+            <View style={styles.searchView}>
+                <Icon style={styles.icon} name={'chevron-left'} onPress={ () => { this.handleBackButtonClick() } }  />
+                <SearchBar style={styles.searchBar}
+                searchIcon={{ size: 24 }}
+                onChangeText={text => this.SearchFilterFunction(text)}
+                placeholder="Busca aqui..."
+                value={this.state.search}
+                />
+            </View>
+            <DirectoryScroll 
+                image={(this.state.section==1)? BookMarkImage : CustomerSupport}
+                list={this.state.categories}
+                onPressItem={(this.state.section==1)? this.selectCategory: this.selectService}
+                key={this.state.section}
             />
-            <ScrollView style={styles.row}>
-            {
-                
-                this.state.categories.map((option)=>(<ServiceCategory
-                    index={option.id} 
-                    key={option.id} 
-                    image={option.image} 
-                    name={option.name}
-                    navigation={this.props.navigation}/>))
-            }
-            </ScrollView>
         <StatusBar style="auto" />
         </SafeAreaView>
        ) 
@@ -98,13 +144,22 @@ export default class Directory extends React.Component<Category>{
 
 const styles = StyleSheet.create({
     searchBar:{
-        width: '100%',
+        flexBasis: '80%'
+    },
+    icon:{
+        maxWidth:24,
+        maxHeight: 24,
+        flexBasis: '20%'
     },
     row: {
         width: '100%',
         flexDirection: 'column',
         marginBottom: 16,
-      },
+    },
+    searchView:{
+        display: 'flex', 
+        flexDirection: 'row'
+    },
     container: {
       flex: 1,
     },
