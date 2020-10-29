@@ -1,3 +1,4 @@
+import constants from '@/constants';
 import React from 'react';
 import { StyleProp, StyleSheet, Text, TouchableOpacity, ViewStyle } from 'react-native';
 
@@ -61,11 +62,11 @@ const styles = StyleSheet.create({
   },
 
   buttonPrimary: {
-    backgroundColor: '#00848c',
+    backgroundColor: constants.colors.darkCyan,
   },
 
   buttonYellow: {
-    backgroundColor: '#fccf17',
+    backgroundColor: constants.colors.tangerineYellow,
   },
 
   buttonTextDefault: {

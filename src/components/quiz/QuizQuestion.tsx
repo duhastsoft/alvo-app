@@ -60,7 +60,7 @@ function QuizImage(imageUri: string) {
 
 const styles = StyleSheet.create({
   counter: {
-    backgroundColor: '#00848C',
+    backgroundColor: constants.colors.darkCyan,
     color: '#fff',
     borderRadius: 100 / 2,
     justifyContent: 'center',

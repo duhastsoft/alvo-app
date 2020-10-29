@@ -1,3 +1,4 @@
+import constants from '@/constants';
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity } from 'react-native';
 
@@ -38,7 +39,7 @@ export default function QuizOption(props: QuizOptionProps) {
       <Text
         style={[
           styles.optionLetter,
-          { color: props.correct || props.incorrect ? '#000' : '#00848C' },
+          { color: props.correct || props.incorrect ? '#000' : constants.colors.darkCyan },
         ]}
       >
         {optionLetter}
@@ -78,7 +79,7 @@ const styles = StyleSheet.create({
   },
 
   optionLetter: {
-    color: '#00848C',
+    color: constants.colors.darkCyan,
     fontSize: 20,
     marginLeft: 8,
   },
