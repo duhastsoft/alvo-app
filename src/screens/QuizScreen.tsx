@@ -1,6 +1,9 @@
 import Button, { ButtonTypes } from '@/components/buttons/Button';
 import QuizOptions from '@/components/quiz/QuizOptions';
 import QuizQuestion from '@/components/quiz/QuizQuestion';
+import { RootStackParamList } from '@/types';
+import { RouteProp } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
 import Axios from 'axios';
 import React, { Component } from 'react';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
@@ -25,7 +28,12 @@ interface QuizState {
   questions?: Question[];
 }
 
-export default class QuizScreen extends Component<{}, QuizState> {
+interface QuizProps {
+  navigator: StackNavigationProp<RootStackParamList, 'Quiz'>;
+  route: RouteProp<RootStackParamList, 'Quiz'>;
+}
+
+export default class QuizScreen extends Component<QuizProps, QuizState> {
   state: QuizState = {
     loading: true,
     counter: 0,
@@ -40,7 +48,11 @@ export default class QuizScreen extends Component<{}, QuizState> {
 
   async componentDidMount() {
     try {
-      const response = await Axios.get('/quiz/free', { params: { limit: 5 } });
+      const { params } = this.props.route;
+      const url = `/quiz/${params.type}`;
+      const response = await Axios.get(url, {
+        params: { limit: params.limit, category: params.category },
+      });
       const quiz = response.data.data;
 
       this.setState({ questions: quiz, loading: false });
