@@ -1,21 +1,41 @@
+import BookImage from '@/assets/images/book-1.png';
+import ConeImage from '@/assets/images/cone-1.png';
+import StopImage from '@/assets/images/stop-sign-1.png';
+import TireImage from '@/assets/images/tire-1.png';
 import Button, { ButtonTypes } from '@/components/buttons/Button';
 import Card from '@/components/card/Card';
+import { BottomTabParamList } from '@/types';
+import { StackNavigationProp } from '@react-navigation/stack';
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
-import StopImage from '@/assets/images/stop-sign-1.png';
-import TireImage from '@/assets/images/tire-1.png';
-import BookImage from '@/assets/images/book-1.png';
-import ConeImage from '@/assets/images/cone-1.png';
+
+const DEFAULT_QUIZ_SIZE = 20;
 
 const options = [
-  { image: StopImage, title: 'Señalización' },
-  { image: TireImage, title: 'Ley de transporte' },
-  { image: BookImage, title: 'Reglamento General' },
-  { image: ConeImage, title: 'Examen VMT' },
+  { image: StopImage, title: 'Señalización', type: 'category', id: 3, limit: DEFAULT_QUIZ_SIZE },
+  {
+    image: TireImage,
+    title: 'Ley de transporte',
+    type: 'category',
+    id: 1,
+    limit: DEFAULT_QUIZ_SIZE,
+  },
+  {
+    image: BookImage,
+    title: 'Reglamento General',
+    type: 'category',
+    id: 2,
+    limit: DEFAULT_QUIZ_SIZE,
+  },
+  { image: ConeImage, title: 'Examen VMT', type: 'vmt' },
 ];
 
-export default function Home() {
+interface HomeProps {
+  navigation: StackNavigationProp<BottomTabParamList, 'Home'>;
+}
+
+export default function Home({ navigation }: HomeProps) {
   return (
     <View style={styles.container}>
       <View style={styles.row}>
@@ -25,14 +45,24 @@ export default function Home() {
             image={option.image}
             title={option.title}
             style={styles.item}
-            onPress={() => alert(`You pressed ${option.title}`)}
+            onPress={() =>
+              navigation.dangerouslyGetParent()?.navigate('Quiz', {
+                type: option.type,
+                category: option.id,
+              })
+            }
           />
         ))}
       </View>
 
       <Button
         title="Prueba libre"
-        onPressEvent={() => alert('Prueba libre')}
+        onPressEvent={() =>
+          navigation.dangerouslyGetParent()?.navigate('Quiz', {
+            type: 'free',
+            limit: DEFAULT_QUIZ_SIZE,
+          })
+        }
         style={{ width: '100%' }}
         type={ButtonTypes.YELLOW}
       />

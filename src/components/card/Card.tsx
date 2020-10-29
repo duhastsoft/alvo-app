@@ -1,3 +1,4 @@
+import constants from '@/constants';
 import React from 'react';
 import {
   Image,
@@ -42,7 +43,7 @@ const styles = StyleSheet.create({
   },
 
   cardTitle: {
-    color: '#00848c',
+    color: constants.colors.darkCyan,
     textAlign: 'center',
   },
 });
