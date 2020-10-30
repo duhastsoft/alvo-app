@@ -12,18 +12,7 @@ const Stack = createStackNavigator<RootStackParamList>();
 export default function Navigation() {
   return (
     <NavigationContainer>
-      <Stack.Navigator
-        screenOptions={{
-          headerTintColor: constants.colors.darkCyan,
-          headerTitleStyle: {
-            fontWeight: 'bold',
-          },
-        }}
-      >
-        <Stack.Screen name="Root" component={BottomTabsNavigator} options={{ title: 'Alvo' }} />
-        <Stack.Screen name="Quiz" component={QuizScreen} options={{ title: 'Examen de manejo' }} />
-        <Stack.Screen name="DirectorybyCategory" component={DirectorybyCategoryScreen} options={{ title: 'Directorio' }} />
-      </Stack.Navigator>
+    <BottomTabsNavigator/>
     </NavigationContainer>
   );
 }

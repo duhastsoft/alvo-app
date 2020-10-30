@@ -1,12 +1,12 @@
 import React from 'react';
 import { SectionList, StyleSheet, Text, View } from 'react-native';
-import { RootStackParamList } from '@/types';
+import { DirectoryStackParamList } from '@/types';
 import { RouteProp } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 
 interface DirectorybyCategoryProps {
-    navigator: StackNavigationProp<RootStackParamList, 'DirectorybyCategory'>;
-    route: RouteProp<RootStackParamList, 'DirectorybyCategory'>;
+    navigator: StackNavigationProp<DirectoryStackParamList, 'DirectorybyCategory'>;
+    route: RouteProp<DirectoryStackParamList, 'DirectorybyCategory'>;
   }
 
 
@@ -45,5 +45,7 @@ export default function DirectorybyCategory(){
           keyExtractor={(item, index) => index}
         />
       </View>
+      //agregar bottom navigator
+      //cambiar nombre de pestana anterior
     );
 }
