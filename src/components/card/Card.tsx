@@ -40,6 +40,8 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     backgroundColor: '#fff',
     elevation: 4,
+    ...constants.styles.iosElevation4,
+    alignSelf: 'stretch'
   },
 
   cardTitle: {
