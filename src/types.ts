@@ -8,8 +8,8 @@ export type RootStackParamList = {
 };
 
 export type BottomTabParamList = {
-  Home: undefined;
-  Content: undefined;
-  Directory: undefined;
-  Schools: undefined;
+  Inicio: undefined;
+  Contenido: undefined;
+  Directorio: undefined;
+  Escuelas: undefined;
 };
