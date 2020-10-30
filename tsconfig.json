@@ -4,7 +4,11 @@
     "jsx": "react-native",
     "lib": ["dom", "esnext"],
     "moduleResolution": "node",
+<<<<<<< HEAD
     "target": "es5",
+=======
+    "allowJs": true,
+>>>>>>> feature/adding-visual
     "noEmit": true,
     "skipLibCheck": true,
     "resolveJsonModule": true,

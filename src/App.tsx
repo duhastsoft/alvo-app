@@ -15,6 +15,21 @@ function App() {
       </SafeAreaView>
     </SafeAreaProvider>
   );
+
+  function selectIcon (focused: boolean, iconName: string){
+    switch(iconName){
+      case 'Home':
+        return focused ? 'home-variant' : 'home-variant';
+      case 'Content':
+        return focused ? 'book-open-page-variant' : 'book-open-page-variant';
+      case 'Directory':
+        return focused ? 'notebook' : 'notebook';
+      case 'Escuelas':
+        return focused ? 'map-search' : 'map-search';
+      default:
+        return focused ? 'home-variant' : 'home-variant';
+    }
+  }
 }
 
 const styles = StyleSheet.create({
