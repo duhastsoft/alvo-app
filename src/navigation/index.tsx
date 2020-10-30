@@ -1,5 +1,6 @@
 import constants from '@/constants';
 import QuizScreen from '@/screens/QuizScreen';
+import DirectoryScreen from '@/screens/DirectoryScreen';
 import { RootStackParamList } from '@/types';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
