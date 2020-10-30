@@ -11,10 +11,10 @@ import { BottomTabParamList } from '@/types';
 const Tab = createBottomTabNavigator<BottomTabParamList>();
 
 const tabIcons: { [key: string]: string } = {
-  Home: 'home-variant',
-  Content: 'book-open-page-variant',
-  Directory: 'notebook',
-  Schools: 'map-search',
+  Inicio: 'home-variant',
+  Contenido: 'book-open-page-variant',
+  Directorio: 'notebook',
+  Escuelas: 'map-search',
 };
 
 export default function BottomTabsNavigator() {
@@ -37,10 +37,10 @@ export default function BottomTabsNavigator() {
         inactiveTintColor: 'gray',
       }}
     >
-      <Tab.Screen name="Home" component={Home} />
-      <Tab.Screen name="Content" component={ContentScreen} />
-      <Tab.Screen name="Directory" component={DirectoryScreen} />
-      <Tab.Screen name="Schools" component={MapScreen} />
+      <Tab.Screen name="Inicio" component={Home} />
+      <Tab.Screen name="Contenido" component={ContentScreen} />
+      <Tab.Screen name="Directorio" component={DirectoryScreen} />
+      <Tab.Screen name="Escuelas" component={MapScreen} />
     </Tab.Navigator>
   );
 }

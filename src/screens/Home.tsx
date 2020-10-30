@@ -32,7 +32,7 @@ const options = [
 ];
 
 interface HomeProps {
-  navigation: StackNavigationProp<BottomTabParamList, 'Home'>;
+  navigation: StackNavigationProp<BottomTabParamList, 'Inicio'>;
 }
 
 export default function Home({ navigation }: HomeProps) {
