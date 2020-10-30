@@ -24,7 +24,7 @@ export default function DirectoryScroll(props: DirectoryScrollProps){
                     index={0} 
                     key={0} 
                     image={LoadingIcon} 
-                    name={'Nada que mostrar aquí'}
+                    name={'CARGANDO...'}
                     style={props.styleItems}
                     />
         </ScrollView>)

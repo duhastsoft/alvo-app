@@ -5,7 +5,7 @@ import { Platform, SafeAreaView, StatusBar, StyleSheet } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import Navigation from './navigation';
 
-Axios.defaults.baseURL = 'http://192.168.0.6:8080/api/v1';
+Axios.defaults.baseURL = 'http://192.168.56.1:8080/api/v1';
 
 function App() {
   return (
@@ -15,21 +15,6 @@ function App() {
       </SafeAreaView>
     </SafeAreaProvider>
   );
-
-  function selectIcon (focused: boolean, iconName: string){
-    switch(iconName){
-      case 'Home':
-        return focused ? 'home-variant' : 'home-variant';
-      case 'Content':
-        return focused ? 'book-open-page-variant' : 'book-open-page-variant';
-      case 'Directory':
-        return focused ? 'notebook' : 'notebook';
-      case 'Escuelas':
-        return focused ? 'map-search' : 'map-search';
-      default:
-        return focused ? 'home-variant' : 'home-variant';
-    }
-  }
 }
 
 const styles = StyleSheet.create({
