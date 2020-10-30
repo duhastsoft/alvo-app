@@ -36,17 +36,21 @@ export default class DirectoryScreen extends React.Component{
     };
 
 
-    handleBackButtonClick() {
-        this.setState({
-            target: 0,
-            section: 1,
-            isLoading: false,
-            categories: [defaultCategory]
-        }, () =>this.loadContent());
-        return true;
+    handleBackButtonClick(): void {
+        try{
+            this.setState({
+                target: 0,
+                section: 1,
+                isLoading: false,
+                categories: [defaultCategory]
+            }, () =>this.loadContent());
+        }
+        catch(err){
+            console.log(err);
+        }
     }
 
-    selectCategory (target: number){
+    selectCategory (target: number): void{
         this.setState({
             target,
             section: 2,
@@ -58,7 +62,7 @@ export default class DirectoryScreen extends React.Component{
 
     }
 
-    SearchFilterFunction(text: string) {
+    SearchFilterFunction(text: string): void {
         const newData = this.state.dataSoruce.filter(function(item) {
           const itemData = item.name ? item.name.toUpperCase() : ''.toUpperCase();
           const textData = text.toUpperCase();
@@ -76,7 +80,7 @@ export default class DirectoryScreen extends React.Component{
         '/service/all':'/service-category/'+this.state.target;;
         Axios.get(request, { params: { limit: 5 } })
         .then(myJson => {
-            const itemsArray = (this.state.target!=0)? myJson.data.data.services : myJson.data.data;
+            const itemsArray = (this.state.target==0)? myJson.data.data: myJson.data.data.services;
             const newCategories = itemsArray.map((e: ListItem)=>{
                 const formal = e.name.toUpperCase();
                 return  {
@@ -115,11 +119,12 @@ export default class DirectoryScreen extends React.Component{
        return(
         <SafeAreaView style={styles.container} >
             <View style={styles.searchHeader}>
-                <TouchableOpacity style={(this.state.section==2)? styles.viewIcon:styles.viewNoIcon} >
+                <View style={(this.state.section==2)? styles.viewIcon:styles.viewNoIcon} >
                     <Icon style={styles.icon}
                     name={'chevron-left'} 
-                    onPress={ () => { this.handleBackButtonClick() } }  />
-                </TouchableOpacity>
+                    onPress={this.handleBackButtonClick}  
+                />
+                </View>
                 <View style={styles.searchBar}>
                     <SearchBar 
                     
