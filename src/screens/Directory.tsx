@@ -9,13 +9,11 @@ import DirectoryScroll from '@/components/scroll-views/DirectoryScroll';
 
 
 interface ListItem {
-    image: ImageSourcePropType;
     name: string;
     id: number;
 }
 
 const defaultCategory: ListItem = {
-    image: BookMarkImage,
     name: 'Todas las categorias',
     id: 0
 }
@@ -32,7 +30,7 @@ export default class Directory extends React.Component{
         search: '', 
         section: 1,
         target: 0,
-        categories: [defaultCategory] as ListItem[],
+        categories: [] as ListItem[],
         dataSoruce: [] as ListItem[]
     };
 
@@ -48,9 +46,8 @@ export default class Directory extends React.Component{
     }
 
     selectCategory (target: number){
-        const recived = target;
         this.setState({
-            target: recived,
+            target,
             section: 2,
             isLoading: false,
             categories: []
@@ -75,29 +72,31 @@ export default class Directory extends React.Component{
     
 
     loadContent(){
-        const base = (this.state.section==1) ? '/service-category/all':  '/service';
-        const target = (this.state.section==2) ? 
-        (this.state.target==0)? '/all' :'/'+this.state.target 
-        : '' ;
-        const request = base + target;
+        const request = (this.state.section==1)? 
+        '/service-category/all': (this.state.target==0)? 
+        '/service/all':'/service-category/'+this.state.target;;
         Axios.get(request, { params: { limit: 5 } })
         .then(myJson => {
-            const newCategories = myJson.data.data.map((e: ListItem)=>{
+            const itemsArray = (this.state.target!=0)? myJson.data.data.services : myJson.data.data;
+            const newCategories = itemsArray.map((e: ListItem)=>{
                 const formal = e.name.charAt(0).toUpperCase() + e.name.slice(1);
                 return  {
                     name: formal,
                     id: e.id
                 } as ListItem
             });
-            const categories = [...this.state.categories].concat(newCategories);
+            const categories = [...newCategories];
+            if(this.state.section==1)
+                categories.unshift(defaultCategory);
             this.state.dataSoruce = categories;
-            this.setState({
-                categories});
+            this.setState({categories,
+                isLoading:false});
         }).catch(err=>{
             console.log(err);
-        }).finally(()=>{
-            this.setState({isLoading:false})
-        });
+            this.state.dataSoruce = [];
+            this.setState({categories:[],
+                isLoading:false});
+        })
     }
 
     componentDidMount(){
@@ -121,9 +120,12 @@ export default class Directory extends React.Component{
 
        return(
         <SafeAreaView style={styles.container} >
-            <View style={styles.searchView}>
-                <Icon style={styles.icon} name={'chevron-left'} onPress={ () => { this.handleBackButtonClick() } }  />
-                <SearchBar style={styles.searchBar}
+            <View style={styles.searchHeader}>
+                <Icon style={(this.state.section==2)? styles.icon:styles.noIcon} 
+                name={'chevron-left'} 
+                onPress={ () => { this.handleBackButtonClick() } }  />
+                <SearchBar 
+                style={styles.searchBar}
                 searchIcon={{ size: 24 }}
                 onChangeText={text => this.SearchFilterFunction(text)}
                 placeholder="Busca aqui..."
@@ -131,6 +133,7 @@ export default class Directory extends React.Component{
                 />
             </View>
             <DirectoryScroll 
+                style={styles.directoryScroll}
                 image={(this.state.section==1)? BookMarkImage : CustomerSupport}
                 list={this.state.categories}
                 onPressItem={(this.state.section==1)? this.selectCategory: this.selectService}
@@ -143,25 +146,25 @@ export default class Directory extends React.Component{
 }
 
 const styles = StyleSheet.create({
+    searchHeader:{
+        display: 'flex',
+        flexDirection: 'row',
+    },
+    directoryScroll:{
+        display: 'flex',
+        flexDirection: 'column',
+    },
     searchBar:{
-        flexBasis: '80%'
+        
     },
     icon:{
-        maxWidth:24,
-        maxHeight: 24,
-        flexBasis: '20%'
     },
-    row: {
-        width: '100%',
-        flexDirection: 'column',
-        marginBottom: 16,
-    },
-    searchView:{
-        display: 'flex', 
-        flexDirection: 'row'
+    noIcon:{
+        display: "none"
     },
     container: {
-      flex: 1,
+    width: '100%',
+      flex: 1
     },
     cardTitle: {
         color: '#000000',

@@ -8,7 +8,7 @@ export interface CardCategoryProps {
     image: ImageSourcePropType;
     name: string;
     style?: StyleProp<ViewStyle>,
-    onPress: (index: number) => void;
+    onPress?: (index: number) => void;
 }   
 
 export default class ServiceCategory extends React.Component<CardCategoryProps>{
@@ -16,14 +16,17 @@ export default class ServiceCategory extends React.Component<CardCategoryProps>{
         super(props);
     }
     buttonPress (indexS: number){
-        this.props.onPress(indexS);
+        this.props.onPress!(indexS);
     }
     
     render(){
         return(
             <TouchableOpacity
             style={[styles.card, this.props.style]}
-            onPress={()=>this.buttonPress(this.props.index)}
+            onPress={()=>{
+                if(this.props.onPress)
+                    this.buttonPress(this.props.index)
+            }}
             activeOpacity={0.8}
             >
                 <View style={styles.cardContent}>
@@ -42,7 +45,7 @@ export default class ServiceCategory extends React.Component<CardCategoryProps>{
 const styles = StyleSheet.create({
     card: {
       padding: 16,
-      backgroundColor: '#f0ffff',
+      backgroundColor: '#ffffff',
       width: '100%',
       elevation: 8,
     },
