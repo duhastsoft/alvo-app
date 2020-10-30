@@ -5,7 +5,7 @@ import { Platform, SafeAreaView, StatusBar, StyleSheet } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import Navigation from './navigation';
 
-Axios.defaults.baseURL = 'http://192.168.1.12:8080/api/v1';
+Axios.defaults.baseURL = 'http://192.168.0.6:8080/api/v1';
 
 function App() {
   return (
