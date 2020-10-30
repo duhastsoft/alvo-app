@@ -19,7 +19,7 @@ export default function List(props: ListProps) {
         <View style={styles.container}>
             <FlatList
                 data={props.data}
-                renderItem={({ item }) => <Text style={styles.item}>{item.title}</Text>}
+                renderItem={({ item }) => <Text onPress = {props.onPress} style={styles.item}>{item.title}</Text>}
             />
         </View>
     );
