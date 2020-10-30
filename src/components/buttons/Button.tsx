@@ -48,6 +48,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     marginVertical: 8,
     elevation: 4,
+    ...constants.styles.iosElevation4,
   },
 
   buttonText: {

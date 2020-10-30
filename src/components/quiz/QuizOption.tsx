@@ -60,6 +60,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginHorizontal: 12,
     marginBottom: 20,
+    ...constants.styles.iosElevation2,
   },
 
   selected: {
