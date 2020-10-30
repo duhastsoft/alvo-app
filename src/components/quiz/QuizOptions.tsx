@@ -8,6 +8,7 @@ interface QuizOptionsProps {
   questionHasImage: boolean;
   selectedOption: number;
   confirmed: boolean;
+  shouldShuffle: boolean;
   rightAnswer: number;
   onSelect: (index: number, answer: number) => void;
 }
@@ -15,7 +16,9 @@ interface QuizOptionsProps {
 export default function QuizOptions(props: QuizOptionsProps) {
   const [shuffledIndexes, setShuffledIndexes] = useState(Array<number>());
   useEffect(() => {
-    setShuffledIndexes(shuffleAnswers([1, 2, 3, 4]));
+    if (props.shouldShuffle) {
+      setShuffledIndexes(shuffleAnswers([1, 2, 3, 4]));
+    } else setShuffledIndexes([1, 2, 3, 4]);
   }, [props.questionNumber]);
 
   return (

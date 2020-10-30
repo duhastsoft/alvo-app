@@ -17,6 +17,7 @@ interface Question {
   answer3: string;
   answer4: string;
   rightAnswer: number;
+  requiresOrder: boolean;
 }
 
 interface QuizState {
@@ -77,8 +78,10 @@ export default class QuizScreen extends Component<QuizProps, QuizState> {
           answerConfirmed: false,
         }));
       } else alert('Examen finalizado');
-    } else {
+    } else if (this.state.selectedIndex != -1) {
       this.setState({ answerConfirmed: true });
+    } else {
+      alert('Selecciona una opción y luego confirma tu respuesta');
     }
   };
 
@@ -110,6 +113,7 @@ export default class QuizScreen extends Component<QuizProps, QuizState> {
             questionNumber={this.state.counter}
             rightAnswer={this.currentQuestion.rightAnswer}
             selectedOption={this.state.selectedIndex}
+            shouldShuffle={!this.currentQuestion.requiresOrder}
             onSelect={this.onAnswerPressHandler}
           />
         </ScrollView>
