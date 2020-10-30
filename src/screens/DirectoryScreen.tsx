@@ -1,6 +1,8 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import List from '@/components/list/List';
+import { BottomTabParamList } from '@/types';
+import { StackNavigationProp } from '@react-navigation/stack';
 
 const categories=[
   {title: 'Mecanicos'},
@@ -10,11 +12,20 @@ const categories=[
   {title: 'Seguro de carros'},
 ];
 
-export default function DirectoryScreen() {
+interface DirectoryProps {
+  navigation: StackNavigationProp<BottomTabParamList, 'Directorio'>;
+}
+
+export default function DirectoryScreen({ navigation }: DirectoryProps) {
   return (
     <View style={styles.container}>
     <List
       data={categories}
+      onPress={() =>
+        navigation.dangerouslyGetParent()?.navigate('DirectorybyCategory', {
+          //agregar filtro de categoria
+        })
+      }
     />
   </View>
   );
