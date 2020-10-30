@@ -5,8 +5,12 @@ export type RootStackParamList = {
     type: 'category' | 'free' | 'vmt';
     limit?: number;
   };
-  DirectorybyCategory:undefined;
 };
+
+export type DirectoryStackParamList = {
+  Directorio:undefined;
+  DirectorybyCategory:undefined;
+}
 
 export type BottomTabParamList = {
   Inicio: undefined;
