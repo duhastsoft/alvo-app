@@ -1,5 +1,5 @@
 import React from 'react';
-import { FlatList, StyleSheet,Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import List from '@/components/list/List';
 
 const categories=[
