@@ -5,14 +5,14 @@ import { RouteProp } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 
 interface DirectorybyCategoryProps {
-    navigator: StackNavigationProp<DirectoryStackParamList, 'DirectorybyCategory'>;
-    route: RouteProp<DirectoryStackParamList, 'DirectorybyCategory'>;
-  }
+  navigation: StackNavigationProp<DirectoryStackParamList, 'DirectorybyCategory'>;
+  route: RouteProp<DirectoryStackParamList, 'DirectorybyCategory'>;
+}
 
 
 const styles = StyleSheet.create({
   container: {
-   flex: 1,
+    flex: 1,
   },
   sectionHeader: {
     paddingTop: 2,
@@ -21,7 +21,7 @@ const styles = StyleSheet.create({
     paddingBottom: 2,
     fontSize: 18,
     fontWeight: 'bold',
-    backgroundColor: 'rgba(247,247,247,1.0)',
+    backgroundColor: '#cfd8dc',
   },
   item: {
     padding: 10,
@@ -30,22 +30,24 @@ const styles = StyleSheet.create({
   },
 })
 
-export default function DirectorybyCategory(){
-    return (
-      <View style={styles.container}>
-        <SectionList
-          sections={[
-            {title: 'D', data: ['Devin', 'Dan', 'Dominic']},
-            {title: 'J', data: ['Jackson', 'James', 'Jillian', 'Jimmy', 'Joel', 'John', 'Julie']},
-            {title: 'M', data: ['Mackson', 'Mames', 'Millian', 'Mimmy', 'Moel', 'Mohn', 'Mulie']},
-            {title: 'R', data: ['Rackson', 'Rames', 'Rillian', 'Rimmy', 'Roel', 'Rohn', 'Rulie']}
-          ]}
-          renderItem={({item}) => <Text style={styles.item}>{item}</Text>}
-          renderSectionHeader={({section}) => <Text style={styles.sectionHeader}>{section.title}</Text>}
-          keyExtractor={(item, index) => index}
-        />
-      </View>
-      //agregar bottom navigator
-      //cambiar nombre de pestana anterior
-    );
+export default function DirectorybyCategory({ navigation }: DirectorybyCategoryProps) {
+  return (
+    <View style={styles.container}>
+      <SectionList
+        sections={[
+          { title: 'D', data: ['Devin', 'Dan', 'Dominic'] },
+          { title: 'J', data: ['Jackson', 'James', 'Jillian', 'Jimmy', 'Joel', 'John', 'Julie'] },
+          { title: 'M', data: ['Mackson', 'Mames', 'Millian', 'Mimmy', 'Moel', 'Mohn', 'Mulie'] },
+          { title: 'R', data: ['Rackson', 'Rames', 'Rillian', 'Rimmy', 'Roel', 'Rohn', 'Rulie'] }
+        ]}
+        renderItem={({ item }) => <Text
+          onPress={() =>
+            navigation.navigate('ServiceProfile') //agregar parametros
+          } style={styles.item}>{item}</Text>}
+        renderSectionHeader={({ section }) => <Text
+          style={styles.sectionHeader}>{section.title}</Text>}
+        keyExtractor={(item, index) => item + index}
+      />
+    </View>
+  );
 }

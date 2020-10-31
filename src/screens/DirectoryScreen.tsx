@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import List from '@/components/list/List';
-import { BottomTabParamList } from '@/types';
+import { DirectoryStackParamList } from '@/types';
 import { StackNavigationProp } from '@react-navigation/stack';
 
 const categories=[
@@ -13,7 +13,7 @@ const categories=[
 ];
 
 interface DirectoryProps {
-  navigation: StackNavigationProp<BottomTabParamList, 'Directorio'>;
+  navigation: StackNavigationProp<DirectoryStackParamList, 'Directory'>;
 }
 
 export default function DirectoryScreen({ navigation }: DirectoryProps) {
@@ -22,9 +22,7 @@ export default function DirectoryScreen({ navigation }: DirectoryProps) {
     <List
       data={categories}
       onPress={() =>
-        navigation.dangerouslyGetParent()?.navigate('DirectorybyCategory', {
-          //agregar filtro de categoria
-        })
+        navigation.navigate('DirectorybyCategory')
       }
     />
   </View>
