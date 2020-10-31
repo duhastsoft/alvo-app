@@ -1,27 +1,30 @@
+import React from 'react';
 import ContentScreen from '@/screens/ContentScreen';
 import DirectoryScreen from '@/screens/DirectoryScreen';
 import MapScreen from '@/screens/MapScreen';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-import React from 'react';
+import DirectorybyCategoryScreen from '@/screens/DirectorybyCategoryScreen';
+import QuizScreen from '@/screens/QuizScreen';
 import Home from '@/screens/Home';
+import ServiceProfile from '@/screens/ServiceProfile';
+
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createStackNavigator } from '@react-navigation/stack';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+
 import constants from '@/constants';
 import { BottomTabParamList } from '@/types';
-import { createStackNavigator } from '@react-navigation/stack';
 import { DirectoryStackParamList } from '@/types';
-import DirectorybyCategoryScreen from '@/screens/DirectorybyCategoryScreen';
 import { RootStackParamList } from '@/types';
-import QuizScreen from '@/screens/QuizScreen';
 
 const Tab = createBottomTabNavigator<BottomTabParamList>();
 const DirectoryStack = createStackNavigator<DirectoryStackParamList>();
 const Stack = createStackNavigator<RootStackParamList>();
 
 const tabIcons: { [key: string]: string } = {
-  Inicio: 'home-variant',
-  Contenido: 'book-open-page-variant',
-  Directorio: 'notebook',
-  Escuelas: 'map-search',
+  Home: 'home-variant',
+  Content: 'book-open-page-variant',
+  Directory: 'notebook',
+  Schools: 'map-search',
 };
 
 export default function BottomTabsNavigator() {
@@ -44,40 +47,28 @@ export default function BottomTabsNavigator() {
         inactiveTintColor: 'gray',
       }}
     >
-      <Tab.Screen name="Inicio">
-        {() => (
-          <Stack.Navigator
-            screenOptions={{
-              headerTintColor: constants.colors.darkCyan,
-              headerTitleStyle: {
-                fontWeight: 'bold',
-              },
-            }}
-          >
-            <Stack.Screen name="Root" component={Home} options={{ title: 'Alvo' }} />
-            <Stack.Screen name="Quiz" component={QuizScreen} options={{ title: 'Examen de manejo' }} />
-          </Stack.Navigator>
-        )
-        }
-      </Tab.Screen>
-      <Tab.Screen name="Contenido" component={ContentScreen} />
-      <Tab.Screen name="Directorio">
-        {() => (
-          <DirectoryStack.Navigator
-            screenOptions={{
-              headerTintColor: constants.colors.darkCyan,
-              headerTitleStyle: {
-                fontWeight: 'bold',
-              },
-            }}
-          >
-            <DirectoryStack.Screen name="Directorio" component={DirectoryScreen} options={{ title: 'Directorio' }} />
-            <DirectoryStack.Screen name="DirectorybyCategory" component={DirectorybyCategoryScreen}
-              options={{ title: 'Directorio' }} />
-          </DirectoryStack.Navigator>
-        )}
-      </Tab.Screen>
-      <Tab.Screen name="Escuelas" component={MapScreen} />
+      <Tab.Screen name="Home" component={Home} options={{ tabBarLabel: 'Inicio' }}/>
+      <Tab.Screen name="Content" component={ContentScreen} options={{ tabBarLabel: 'Contenido' }} />
+      <Tab.Screen name="Directory" component={DirectoryStackScreen} options={{ tabBarLabel: 'Directorio' }}/>
+      <Tab.Screen name="Schools" component={MapScreen} options={{ tabBarLabel: 'Escuelas' }}/>
     </Tab.Navigator>
+  );
+}
+
+function DirectoryStackScreen() {
+  return (
+    <DirectoryStack.Navigator
+    screenOptions={{
+      headerTintColor: constants.colors.darkCyan,
+      headerTitleStyle: {
+        fontWeight: 'bold',
+      },
+    }}
+  >
+    <DirectoryStack.Screen name="Directory" component={DirectoryScreen} options={{title:'Directory'}} />
+    <DirectoryStack.Screen name="DirectorybyCategory" component={DirectorybyCategoryScreen}
+      options={{ title: 'Directory h' }} />
+    <DirectoryStack.Screen name="ServiceProfile" component={ServiceProfile} options={{ title: 'Perfil' }} />
+  </DirectoryStack.Navigator>
   );
 }
