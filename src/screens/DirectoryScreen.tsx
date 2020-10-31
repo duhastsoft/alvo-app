@@ -168,7 +168,6 @@ const styles = StyleSheet.create({
         flex: 1,
         flexGrow: 1,
         backgroundColor: '#9e9e9e',
-        height: '100%',
         elevation: 4,
         justifyContent: 'center'
     },
