@@ -5,6 +5,9 @@ export type RootStackParamList = {
     type: 'category' | 'free' | 'vmt';
     limit?: number;
   };
+  Service: {
+    id?: number;
+  };
 };
 
 export type BottomTabParamList = {

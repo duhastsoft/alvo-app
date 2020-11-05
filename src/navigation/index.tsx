@@ -1,6 +1,6 @@
 import constants from '@/constants';
-import Directory from '@/screens/DirectoryScreen';
 import QuizScreen from '@/screens/QuizScreen';
+import ServiceScreen from '@/screens/ServiceScreen';
 import { RootStackParamList } from '@/types';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -22,6 +22,7 @@ export default function Navigation() {
       >
         <Stack.Screen name="Root" component={BottomTabsNavigator} options={{ title: 'Alvo' }} />
         <Stack.Screen name="Quiz" component={QuizScreen} options={{ title: 'Examen de manejo' }} />
+        <Stack.Screen name="Service" component={ServiceScreen} options={{title: 'Servicio'}}/>
       </Stack.Navigator>
     </NavigationContainer>
   );

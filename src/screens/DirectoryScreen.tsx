@@ -6,41 +6,37 @@ import BookMarkImage from '@/assets/images/bookmark-1.png';
 import CustomerSupport from '@/assets/images/customer-support-1.png';
 import Axios from 'axios';
 import DirectoryScroll from '@/components/scroll-views/DirectoryScroll';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { BottomTabParamList } from '@/types';
+import {ListItem,Section,defaultCategory} from '@/constants/Directory';
 
 
-interface ListItem {
-    name: string;
-    id: number;
+interface DirectoryProps {
+    navigation: StackNavigationProp<BottomTabParamList, 'Directory'>;
 }
 
-const defaultCategory: ListItem = {
-    name: 'TODAS LAS CATEGORIAS',
-    id: 0
-}
-
-export default class DirectoryScreen extends React.Component{
-    constructor(props: {}){
+export default class DirectoryScreen extends React.Component<DirectoryProps>{
+    constructor(props: DirectoryProps){
         super(props);
         this.selectCategory = this.selectCategory.bind(this);
+        this.selectService = this.selectService.bind(this);
         this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
     }
 
     state = {
         isLoading: true, 
         search: '', 
-        section: 1,
+        section: Section.Categories,
         target: 0,
         categories: [] as ListItem[],
         dataSoruce: [] as ListItem[]
     };
 
-
     handleBackButtonClick(): void {
         try{
             this.setState({
                 target: 0,
-                section: 1,
+                section: Section.Categories,
                 isLoading: false,
                 categories: [defaultCategory]
             }, () =>this.loadContent());
@@ -53,13 +49,16 @@ export default class DirectoryScreen extends React.Component{
     selectCategory (target: number): void{
         this.setState({
             target,
-            section: 2,
+            section: Section.Services,
             isLoading: false,
             categories: []
         }, () =>this.loadContent());
     }
-    selectService(target: number){
 
+    selectService(target: number): void{
+        this.props.navigation.dangerouslyGetParent()?.navigate('Service', {
+            id: target
+        });
     }
 
     SearchFilterFunction(text: string): void {
@@ -75,9 +74,9 @@ export default class DirectoryScreen extends React.Component{
     }
 
     loadContent(){
-        const request = (this.state.section==1)? 
+        const request = (this.state.section==Section.Categories)? 
         '/service-category/all': (this.state.target==0)? 
-        '/service/all':'/service-category/'+this.state.target;;
+        '/service/all':'/service-category/'+this.state.target;
         Axios.get(request, { params: { limit: 5 } })
         .then(myJson => {
             const itemsArray = (this.state.target==0)? myJson.data.data: myJson.data.data.services;
@@ -89,7 +88,7 @@ export default class DirectoryScreen extends React.Component{
                 } as ListItem
             });
             const categories = [...newCategories];
-            if(this.state.section==1)
+            if(this.state.section==Section.Categories)
                 categories.unshift(defaultCategory);
             this.state.dataSoruce = categories;
             this.setState({categories,
@@ -106,6 +105,10 @@ export default class DirectoryScreen extends React.Component{
         this.loadContent();
     }
 
+    componentWillUnmount(){
+   
+    }
+
     render(){
         const target = 'Service';
         if(this.state.isLoading){
@@ -115,11 +118,10 @@ export default class DirectoryScreen extends React.Component{
                 </View>
             )
         }
-
        return(
         <SafeAreaView style={styles.container} >
             <View style={styles.searchHeader}>
-                <View style={(this.state.section==2)? styles.viewIcon:styles.viewNoIcon} >
+                <View style={(this.state.section==Section.Services)? styles.viewIcon:styles.viewNoIcon} >
                     <Icon style={styles.icon}
                     name={'chevron-left'} 
                     onPress={this.handleBackButtonClick}  
@@ -127,7 +129,6 @@ export default class DirectoryScreen extends React.Component{
                 </View>
                 <View style={styles.searchBar}>
                     <SearchBar 
-                    
                     searchIcon={{ size: 24 }}
                     onChangeText={text => this.SearchFilterFunction(text)}
                     placeholder="Busca aqui..."
@@ -137,9 +138,9 @@ export default class DirectoryScreen extends React.Component{
             </View>
             <DirectoryScroll 
                 style={styles.directoryScroll}
-                image={(this.state.section==1)? BookMarkImage : CustomerSupport}
+                image={(this.state.section==Section.Categories)? BookMarkImage : CustomerSupport}
                 list={this.state.categories}
-                onPressItem={(this.state.section==1)? this.selectCategory: this.selectService}
+                onPressItem={(this.state.section==Section.Categories)? this.selectCategory: this.selectService}
                 key={this.state.section}
             />
         <StatusBar style="auto" />
