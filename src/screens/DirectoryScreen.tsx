@@ -9,6 +9,8 @@ import DirectoryScroll from '@/components/scroll-views/DirectoryScroll';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { BottomTabParamList } from '@/types';
 import {ListItem,Section,defaultCategory} from '@/constants/Directory';
+import LoadingComponent from '@/components/LoadingComponent'
+import SearchBarComponent from '@/components/SearchBarComponent';
 
 
 interface DirectoryProps {
@@ -33,17 +35,12 @@ export default class DirectoryScreen extends React.Component<DirectoryProps>{
     };
 
     handleBackButtonClick(): void {
-        try{
-            this.setState({
-                target: 0,
-                section: Section.Categories,
-                isLoading: false,
-                categories: [defaultCategory]
-            }, () =>this.loadContent());
-        }
-        catch(err){
-            console.log(err);
-        }
+        this.setState({
+            target: 0,
+            section: Section.Categories,
+            isLoading: false,
+            categories: [defaultCategory]
+        }, () =>this.loadContent());
     }
 
     selectCategory (target: number): void{
@@ -61,7 +58,7 @@ export default class DirectoryScreen extends React.Component<DirectoryProps>{
         });
     }
 
-    SearchFilterFunction(text: string): void {
+    searchFilterFunction(text: string): void {
         const newData = this.state.dataSoruce.filter(function(item) {
           const itemData = item.name ? item.name.toUpperCase() : ''.toUpperCase();
           const textData = text.toUpperCase();
@@ -77,65 +74,52 @@ export default class DirectoryScreen extends React.Component<DirectoryProps>{
         const request = (this.state.section==Section.Categories)? 
         '/service-category/all': (this.state.target==0)? 
         '/service/all':'/service-category/'+this.state.target;
-        Axios.get(request, { params: { limit: 5 } })
-        .then(myJson => {
-            const itemsArray = (this.state.target==0)? myJson.data.data: myJson.data.data.services;
-            const newCategories = itemsArray.map((e: ListItem)=>{
-                const formal = e.name.toUpperCase();
-                return  {
-                    name: formal,
-                    id: e.id
-                } as ListItem
-            });
-            const categories = [...newCategories];
-            if(this.state.section==Section.Categories)
-                categories.unshift(defaultCategory);
-            this.state.dataSoruce = categories;
-            this.setState({categories,
-                isLoading:false});
-        }).catch(err=>{
-            console.log(err);
-            this.state.dataSoruce = [];
-            this.setState({categories:[],
-                isLoading:false});
-        })
+        const fetchData = async () =>{
+            try{
+                const result = await Axios.get(request, { params: { limit: 5 } });
+                const itemsArray = (this.state.target==0)? result.data.data: result.data.data.services;
+                const newCategories = itemsArray.map((e: ListItem)=>{
+                    const formal = e.name.toUpperCase();
+                    return  {
+                        name: formal,
+                        id: e.id
+                    } as ListItem
+                });
+                const categories = [...newCategories];
+                if(this.state.section==Section.Categories)
+                    categories.unshift(defaultCategory);
+                this.state.dataSoruce = categories;
+                this.setState({categories,isLoading:false});
+            }
+            catch(err){
+                console.log(err);
+                this.state.dataSoruce = [];
+                this.setState({categories:[],
+                    isLoading:false});
+            }
+        }
+        fetchData();
     }
 
     componentDidMount(){
         this.loadContent();
     }
 
-    componentWillUnmount(){
-   
-    }
-
     render(){
         const target = 'Service';
         if(this.state.isLoading){
             return(
-                <View style={{ flex: 1, paddingTop: 20 }}>
-                    <ActivityIndicator />
-                </View>
+                <LoadingComponent text={'Loading directory'} />
             )
         }
        return(
         <SafeAreaView style={styles.container} >
-            <View style={styles.searchHeader}>
-                <View style={(this.state.section==Section.Services)? styles.viewIcon:styles.viewNoIcon} >
-                    <Icon style={styles.icon}
-                    name={'chevron-left'} 
-                    onPress={this.handleBackButtonClick}  
-                />
-                </View>
-                <View style={styles.searchBar}>
-                    <SearchBar 
-                    searchIcon={{ size: 24 }}
-                    onChangeText={text => this.SearchFilterFunction(text)}
-                    placeholder="Busca aqui..."
-                    value={this.state.search}
-                    />
-                </View>
-            </View>
+            <SearchBarComponent
+                onChangeText={this.searchFilterFunction}
+                onPress={this.handleBackButtonClick}
+                textValue={this.state.search}
+                returnButton={(this.state.section==Section.Categories)? false:true}
+            />
             <DirectoryScroll 
                 style={styles.directoryScroll}
                 image={(this.state.section==Section.Categories)? BookMarkImage : CustomerSupport}
@@ -150,34 +134,10 @@ export default class DirectoryScreen extends React.Component<DirectoryProps>{
 }
 
 const styles = StyleSheet.create({
-    searchHeader:{
-        flexDirection: "row",
-        width: '100%',
-        flexWrap: 'wrap',
-    },
     directoryScroll:{
         width: '100%',
         flexWrap: 'wrap',
         flexDirection: 'column',
-    },
-    searchBar:{
-        flex: 1,
-        flexGrow: 8,
-        elevation: 4,
-    },
-    viewIcon:{
-        flex: 1,
-        flexGrow: 1,
-        backgroundColor: '#9e9e9e',
-        elevation: 4,
-        justifyContent: 'center'
-    },
-    viewNoIcon:{
-        display: 'none'
-    },
-    icon:{
-        width: '100%',
-        padding: 16
     },
     container: {
         width: '100%',
@@ -185,4 +145,4 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
     }
-})
+});
