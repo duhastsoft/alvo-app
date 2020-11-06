@@ -1,6 +1,5 @@
 import React from 'react';
-import {ActivityIndicator, View, StyleSheet, SafeAreaView} from 'react-native';
-import {Icon, SearchBar} from 'react-native-elements';
+import {StyleSheet, SafeAreaView} from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import BookMarkImage from '@/assets/images/bookmark-1.png';
 import CustomerSupport from '@/assets/images/customer-support-1.png';
@@ -22,7 +21,6 @@ export default class DirectoryScreen extends React.Component<DirectoryProps>{
         super(props);
         this.selectCategory = this.selectCategory.bind(this);
         this.selectService = this.selectService.bind(this);
-        this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
     }
 
     state = {
@@ -31,10 +29,10 @@ export default class DirectoryScreen extends React.Component<DirectoryProps>{
         section: Section.Categories,
         target: 0,
         categories: [] as ListItem[],
-        dataSoruce: [] as ListItem[]
+        dataSource: [] as ListItem[]
     };
 
-    handleBackButtonClick(): void {
+    handleBackButtonClick = ()=> {
         this.setState({
             target: 0,
             section: Section.Categories,
@@ -58,10 +56,12 @@ export default class DirectoryScreen extends React.Component<DirectoryProps>{
         });
     }
 
-    searchFilterFunction(text: string): void {
-        const newData = this.state.dataSoruce.filter(function(item) {
+    searchFilterFunction = (text: string): void =>{
+        const searched = text;
+        console.log(this.state)
+        const newData = this.state.dataSource.filter(function(item) {
           const itemData = item.name ? item.name.toUpperCase() : ''.toUpperCase();
-          const textData = text.toUpperCase();
+          const textData = searched.toUpperCase();
           return itemData.indexOf(textData) > -1;
         });
         this.setState({
@@ -79,7 +79,7 @@ export default class DirectoryScreen extends React.Component<DirectoryProps>{
                 const result = await Axios.get(request, { params: { limit: 5 } });
                 const itemsArray = (this.state.target==0)? result.data.data: result.data.data.services;
                 const newCategories = itemsArray.map((e: ListItem)=>{
-                    const formal = e.name.toUpperCase();
+                    const formal = e.name[0].toUpperCase() +  e.name.slice(1);
                     return  {
                         name: formal,
                         id: e.id
@@ -88,12 +88,12 @@ export default class DirectoryScreen extends React.Component<DirectoryProps>{
                 const categories = [...newCategories];
                 if(this.state.section==Section.Categories)
                     categories.unshift(defaultCategory);
-                this.state.dataSoruce = categories;
+                this.state.dataSource = categories;
                 this.setState({categories,isLoading:false});
             }
             catch(err){
                 console.log(err);
-                this.state.dataSoruce = [];
+                this.state.dataSource = [];
                 this.setState({categories:[],
                     isLoading:false});
             }
@@ -121,11 +121,12 @@ export default class DirectoryScreen extends React.Component<DirectoryProps>{
                 returnButton={(this.state.section==Section.Categories)? false:true}
             />
             <DirectoryScroll 
-                style={styles.directoryScroll}
                 image={(this.state.section==Section.Categories)? BookMarkImage : CustomerSupport}
                 list={this.state.categories}
                 onPressItem={(this.state.section==Section.Categories)? this.selectCategory: this.selectService}
                 key={this.state.section}
+                style={styles.directoryScroll}
+                header={(this.state.section==Section.Categories)?false:true}
             />
         <StatusBar style="auto" />
         </SafeAreaView>

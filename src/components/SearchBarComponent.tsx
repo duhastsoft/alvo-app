@@ -15,7 +15,7 @@ export default function SearchBarComponent(props: SearchBarProps){
                 <View style={(props.returnButton)? styles.viewIcon:styles.viewNoIcon} >
                     <Icon style={styles.icon}
                     name={'chevron-left'} 
-                    onPress={props.onPress}  
+                    onPress={()=>props.onPress()}  
                 />
                 </View>
                 <View style={styles.searchBar}>

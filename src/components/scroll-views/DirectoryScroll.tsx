@@ -20,6 +20,7 @@ export interface DirectoryScrollProps {
   styleItems?: StyleProp<ViewStyle>;
   onPressItem: (index: number) => void;
   list: DirectoryListItem[];
+  header: boolean;
 }
 
 export default function DirectoryScroll(props: DirectoryScrollProps) {
@@ -49,7 +50,7 @@ export default function DirectoryScroll(props: DirectoryScrollProps) {
 
   if (props.list.length < 1 || !didMount) {
     return (
-      <ScrollView style={[styles.row, props.style]}>
+      <View style={styles.container}>
         <ServiceCategory
           index={0}
           key={0}
@@ -57,36 +58,50 @@ export default function DirectoryScroll(props: DirectoryScrollProps) {
           name={'CARGANDO...'}
           style={props.styleItems}
         />
-      </ScrollView>
+      </View>
     );
   }
-  return (
-    <View style={styles.container}>
-      <SectionList
-        sections={itemList}
-        renderItem={({ item }) => 
-          <Text onPress={() => 
-            props.onPressItem(item.id)
-          } 
-            style={styles.itemS}>{item.name}</Text>
-        }
-        renderSectionHeader={({ section }) => <Text
-          style={styles.sectionHeader}>{section.title}</Text>}
-        keyExtractor={(item, index) => item.name + index}
-      />
-    </View>
-  );
+  if(props.header){
+    return (
+      <View style={styles.container}>
+        <SectionList
+          sections={itemList}
+          renderItem={({ item }) => 
+            <Text onPress={() => 
+              props.onPressItem(item.id)
+            } 
+              style={styles.itemS}>{item.name}</Text>
+          }
+          renderSectionHeader={({ section }) => <Text
+            style={styles.sectionHeader}>{section.title}</Text>}
+          keyExtractor={(item, index) => item.name + index}
+        />
+      </View>
+    );
+  }
+  else{
+    return (
+      <View style={styles.container}>
+        <SectionList
+          sections={itemList}
+          renderItem={({ item }) => 
+            <Text onPress={() => 
+              props.onPressItem(item.id)
+            } 
+              style={styles.itemS}>{item.name}</Text>
+          }
+        />
+      </View>
+    );
+  }
+  
  
 }
 
 const styles = StyleSheet.create({
-  row: {
-    width: '100%',
-    flexDirection: 'row',
-    marginBottom: 16,
-  },
   container: {
-    flex: 1,
+    width: '100%',
+    display: 'flex',
     backgroundColor:'white'
   },
   sectionHeader: {

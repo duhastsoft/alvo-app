@@ -2,10 +2,7 @@ import React from 'react';
 import ContentScreen from '@/screens/ContentScreen';
 import DirectoryScreen from '@/screens/DirectoryScreen';
 import MapScreen from '@/screens/MapScreen';
-import DirectorybyCategoryScreen from '@/screens/DirectorybyCategoryScreen';
-import QuizScreen from '@/screens/QuizScreen';
 import Home from '@/screens/Home';
-import ServiceProfile from '@/screens/ServiceProfile';
 
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';

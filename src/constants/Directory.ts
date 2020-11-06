@@ -8,6 +8,6 @@ export interface ListItem {
     id: number;
 }
 export const defaultCategory: ListItem = {
-    name: 'TODAS LAS CATEGORIAS',
+    name: 'Todas las categorias',
     id: 0
 }
