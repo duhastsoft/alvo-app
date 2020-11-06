@@ -1,15 +1,16 @@
 import React, { useState, useEffect} from 'react';
-import { ActivityIndicator, SectionList, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, ImagePropTypes, SectionList, StyleSheet, Text, View } from 'react-native';
 import axios from 'axios';
 import { RootStackParamList } from '@/types';
 import { RouteProp } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import Profile from '@/components/profile/Profile'
-import TireImage from '@/assets/images/tire-1.png';
+import LoadingComponent from '@/components/LoadingComponent';
 
 interface ServiceScreenProps {
     navigator: StackNavigationProp<RootStackParamList, 'Service'>;
     route: RouteProp<RootStackParamList, 'Service'>;
+    category: string;
 }
 
 interface ProfileData{
@@ -44,7 +45,6 @@ export default function ServiceScreen(props: ServiceScreenProps){
     const [didMount, setDidMount] = useState(false); 
 
     const fetchData = async () => {
-        
         const result = await axios.get(`/service/${id}`);
         const data: ProfileData = result.data.data;
         setProfile(data);
@@ -54,18 +54,21 @@ export default function ServiceScreen(props: ServiceScreenProps){
         fetchData();
     }, []);
     if (!didMount) {
-        return (
-          <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color="#00848C" />
-            <Text style={styles.loadingText}>Cargando siguiente pregunta</Text>
-          </View>
-        );
+        return(
+            <LoadingComponent  text={'Loading service'}/>
+        )
     }
     return(
         <View style={styles.container}>
             <Profile
+             key={id}
              name= {profile.name}
              image={profile.image}
+             description={profile.description}
+             address={profile.address}
+             category={props.category}
+             hours={profile.serviceHours}
+             phone={profile.contactNumber}
             />
         </View>
      );
@@ -76,18 +79,8 @@ const styles = StyleSheet.create({
      flex: 1,
     },
     item: {
-      padding: 10,
-      fontSize: 18,
-      height: 44,
-    },
-    loadingContainer: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-      },
-    
-      loadingText: {
-        marginTop: 12,
-        fontSize: 14,
-      }
+        padding: 10,
+        fontSize: 18,
+        height: 44,
+    }
   });

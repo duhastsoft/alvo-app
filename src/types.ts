@@ -10,6 +10,12 @@ export type RootStackParamList = {
   };
 };
 
+export type DirectoryStackParamList = {
+  Directory:undefined;
+  DirectorybyCategory:undefined;
+  ServiceProfile:undefined;
+}
+
 export type BottomTabParamList = {
   Home: undefined;
   Content: undefined;
