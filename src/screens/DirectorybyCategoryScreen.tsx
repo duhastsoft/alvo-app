@@ -3,6 +3,7 @@ import { SectionList, StyleSheet, Text, View } from 'react-native';
 import { DirectoryStackParamList } from '@/types';
 import { RouteProp } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
+import constants from '@/constants';
 
 interface DirectorybyCategoryProps {
   navigation: StackNavigationProp<DirectoryStackParamList, 'DirectorybyCategory'>;
@@ -13,20 +14,23 @@ interface DirectorybyCategoryProps {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor:'white'
   },
   sectionHeader: {
-    paddingTop: 2,
-    paddingLeft: 10,
-    paddingRight: 10,
-    paddingBottom: 2,
+    paddingVertical: 2,
+    paddingHorizontal: 14,
     fontSize: 18,
     fontWeight: 'bold',
-    backgroundColor: '#cfd8dc',
+    color: 'white',
+    backgroundColor: constants.colors.darkCyan,
   },
   item: {
     padding: 10,
+    paddingHorizontal: 14,
     fontSize: 18,
     height: 44,
+    borderBottomWidth: 0.2,
+    borderBottomColor: '#cfd8dc',
   },
 })
 

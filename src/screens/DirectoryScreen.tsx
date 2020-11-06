@@ -5,11 +5,11 @@ import { DirectoryStackParamList } from '@/types';
 import { StackNavigationProp } from '@react-navigation/stack';
 
 const categories=[
-  {title: 'Mecanicos'},
-  {title: 'Talleres'},
-  {title: 'Gruas'},
-  {title: 'Venta de repuestos'},
-  {title: 'Seguro de carros'},
+  {category: 'Mecanicos'},
+  {category: 'Talleres'},
+  {category: 'Gruas'},
+  {category: 'Venta de repuestos'},
+  {category: 'Seguro de carros'},
 ];
 
 interface DirectoryProps {
@@ -35,7 +35,8 @@ const styles = StyleSheet.create({
   },
   item: {
     padding: 10,
+    paddingHorizontal: 14,
     fontSize: 18,
     height: 44,
-  },
+    },
 });
