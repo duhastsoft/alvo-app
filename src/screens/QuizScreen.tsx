@@ -86,16 +86,12 @@ export default class QuizScreen extends Component<QuizProps, QuizState> {
           answerConfirmed: false,
         }));
       } else {
-        const score = this.state.correctAnswers / this.state.questions!.length;
+        const score = (this.state.correctAnswers / this.state.questions!.length) * 10;
         navigation.replace('Results', {
           score,
           correctAnswers: this.state.correctAnswers,
           numberQuestions: this.state.questions!.length,
         });
-        // console.log('score ', score);
-        // console.log('correctanswers ', this.state.correctAnswers);
-        // console.log('numberquestions', this.state.questions!.length);
-        // alert('Examen finalizado');
       }
     } else if (this.state.selectedIndex != -1) {
       this.setState({ answerConfirmed: true });
