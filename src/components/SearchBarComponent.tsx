@@ -20,10 +20,13 @@ export default function SearchBarComponent(props: SearchBarProps){
                 </View>
                 <View style={styles.searchBar}>
                     <SearchBar 
-                    searchIcon={{ size: 24 }}
+                    searchIcon={{ size: 24, color:'gray' }}
                     onChangeText={text => props.onChangeText(text)}
                     placeholder="Busca aqui..."
+                    placeholderTextColor='gray'
                     value={props.textValue}
+                    containerStyle={styles.searchBarStyle}
+                    inputContainerStyle={styles.inputContainerStyle}
                     />
                 </View>
         </View>
@@ -35,6 +38,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         width: '100%',
         flexWrap: 'wrap',
+        
     },
     searchBar:{
         flex: 1,
@@ -54,5 +58,16 @@ const styles = StyleSheet.create({
     icon:{
         width: '100%',
         padding: 16
+    },
+    searchBarStyle:{
+        backgroundColor: 'white',
+        borderTopColor: 'white',
+        paddingHorizontal:14,
+        borderBottomColor:'#cfd8dc',
+        borderBottomWidth: 0.2,
+    },
+    inputContainerStyle:{
+        backgroundColor:'rgb(242,242,242)',
+        borderRadius:10,
     },
 });
