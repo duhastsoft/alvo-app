@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { ImageSourcePropType, ScrollView, StyleProp, ViewStyle, StyleSheet, View, SectionList, Text } from 'react-native';
-import LoadingIcon from '@/assets/images/sand-clock-1.png';
 import ServiceCategory from '../card/DirectoryCard';
 import constants from '@/constants';
 
@@ -54,8 +53,9 @@ export default function DirectoryScroll(props: DirectoryScrollProps) {
         <ServiceCategory
           index={0}
           key={0}
-          image={LoadingIcon}
           name={'CARGANDO...'}
+          icon_name={'timer-sand'}
+          icon_type={'material-community'}
           style={props.styleItems}
         />
       </View>
