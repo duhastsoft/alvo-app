@@ -54,9 +54,8 @@ export default function DirectoryScroll(props: DirectoryScrollProps) {
           index={0}
           key={0}
           name={'CARGANDO...'}
-          icon_name={'timer-sand'}
-          icon_type={'material-community'}
           style={props.styleItems}
+          icon={{name:'timer-sand', type:'material-community',color:'gray'}}
         />
       </View>
     );

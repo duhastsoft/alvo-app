@@ -5,9 +5,7 @@ import {
     StyleProp, FlatList, StyleSheet, Text, View, ViewStyle, TouchableOpacity
 } from 'react-native';
 import constants from '@/constants';
-import { FontAwesome5 } from '@expo/vector-icons';
-import { EvilIcons } from '@expo/vector-icons';
-import { MaterialIcons } from '@expo/vector-icons';
+import { FontAwesome5,EvilIcons,MaterialIcons } from '@expo/vector-icons';
 import { ScrollView } from 'react-native-gesture-handler';
 
 export interface ProfileProps {

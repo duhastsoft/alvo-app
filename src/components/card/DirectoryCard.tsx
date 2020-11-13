@@ -5,11 +5,10 @@ import { Icon,IconProps } from "react-native-elements";
 
 export interface CardCategoryProps {
     index: number,
-    name: string;
+    name: string,
     style?: StyleProp<ViewStyle>,
     onPress?: (index: number) => void;
-    icon_name: string;
-    icon_type: string;
+    icon: IconProps;
 }   
 
 export default class ServiceCategory extends React.Component<CardCategoryProps>{
@@ -32,7 +31,8 @@ export default class ServiceCategory extends React.Component<CardCategoryProps>{
             >
                 <View style={styles.cardContent}>
 
-                    <Icon name={this.props.icon_name} type={this.props.icon_type} size={24} color="gray" />
+                    <Icon 
+                    name={this.props.icon.name} type={this.props.icon.type} size={this.props.icon.size} color={this.props.icon.color} />
                     <Text style={styles.cardTitle}>{this.props.name}</Text>
                 </View>
             </TouchableOpacity>

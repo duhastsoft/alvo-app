@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         borderTopColor: 'white',
         paddingHorizontal:14,
-        borderBottomColor:'#cfd8dc',
+        borderBottomColor:'white',
         borderBottomWidth: 0.2,
     },
     inputContainerStyle:{

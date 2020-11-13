@@ -30,6 +30,7 @@ export default function List(props: ListProps) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        backgroundColor:'white'
     },
     item: {
         padding: 14,
