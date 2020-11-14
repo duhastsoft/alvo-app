@@ -1,57 +1,89 @@
 import React from "react";
-import { TouchableOpacity, Image, Text, View, StyleSheet, ViewStyle, StyleProp, ImageSourcePropType } from "react-native";
-import { StackNavigationProp } from '@react-navigation/stack';
+import { TouchableOpacity, View, StyleSheet, ViewStyle, StyleProp, Alert, FlatList } from "react-native";
 import { Icon, IconProps } from "react-native-elements";
 import constants from '@/constants';
 import FilterButton from '@/components/buttons/IconTextButton';
+import Chip from '@/components/buttons/Chip';
 
 //tags of selected filter appear on the left side and filter button on the right side
+export interface ItemProps {
+    id: string;
+    name: string;
+}
+
 export interface FilterCardProps {
     style?: StyleProp<ViewStyle>,
+    data?: Array<ItemProps>;
     onPressFilter: () => void;
-    onDeleteFilterTag?: (index: number) => void;
+    onDeleteFilterTag?: (index: string) => void;
     icon: IconProps;
 }
 
-export default class ServiceCategory extends React.Component<FilterCardProps>{
+export default class FilterCard extends React.Component<FilterCardProps>{
     constructor(props: FilterCardProps) {
         super(props);
     }
 
+    buttonPress(indexS: string) {
+        this.props.onDeleteFilterTag!(indexS);
+    }
+
     render() {
         return (
-            <TouchableOpacity
+            <View
                 style={[styles.card, this.props.style]}
-                activeOpacity={0.8}
             >
                 <View style={styles.cardContent}>
 
-                    <Icon
-                        name={this.props.icon.name} type={this.props.icon.type} size={this.props.icon.size} color={this.props.icon.color} />
+                    <FlatList
+                        showsHorizontalScrollIndicator={false}
+                        horizontal={true} style={{ backgroundColor: 'rgb(242,242,242)', paddingVertical: 6, borderRadius: 30, marginBottom: 8 }}
+                        data={this.props.data}
+                        renderItem={({ item }) =>
+                            <Chip name={item.name}
+                                onPress={() => {
+                                    if (this.props.onDeleteFilterTag)
+                                        this.buttonPress(item.id)
+                                }} />}
+
+                    />
+
                     <View
                         style={{
                             flexDirection: "row",
-                            justifyContent: "flex-end"
+                            justifyContent: "flex-end",
+                            marginLeft: 4,
+                            paddingTop: 2,
+                            paddingBottom: 10,
                         }}
                     >
                         <FilterButton
                             name={'Filtrar'}
-                            icon={{ size: 16, color: constants.colors.darkCyan, name: 'filter', type: 'antdesign'}}
+                            icon={{ size: 16, color: constants.colors.darkCyan, name: 'filter', type: 'antdesign' }}
                             onPress={this.props.onPressFilter}
                             style={styles.filters_container}
                         />
                     </View>
                 </View>
-            </TouchableOpacity>
+            </View>
         )
     }
 }
 
+/*<View style={{
+    backgroundColor: 'rgb(242,242,242)',
+    paddingLeft: 4,
+    paddingVertical: 6,
+    marginLeft: 14,
+    borderRadius: 30,
+    flexDirection: 'row',
+    width: '75%'
+}}>*/
+
 const styles = StyleSheet.create({
     card: {
         paddingHorizontal: 14,
-        paddingTop: 2,
-        paddingBottom:10,
+
         backgroundColor: '#ffffff',
         width: '100%',
         elevation: 8,
@@ -70,10 +102,11 @@ const styles = StyleSheet.create({
         display: "flex",
         flexDirection: "row",
         alignItems: 'center',
-        justifyContent: "flex-end"
+        justifyContent: "flex-end",
+        paddingVertical: 4
     },
     filters_container: {
         borderRadius: 30,
-        color: '#00848c'
+        color: '#00848c',
     }
 });

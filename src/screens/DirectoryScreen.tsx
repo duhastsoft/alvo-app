@@ -1,4 +1,4 @@
-import React, { Component, useState } from 'react';
+import React from 'react';
 import { StyleSheet, SafeAreaView, Button, View, Alert, Text, TouchableOpacity } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import BookMarkImage from '@/assets/images/bookmark-1.png';
@@ -11,11 +11,9 @@ import BaseButton, { ButtonTypes } from '@/components/buttons/Button';
 import { ListItem, Section, defaultCategory } from '@/constants/Directory';
 import LoadingComponent from '@/components/LoadingComponent'
 import SearchBarComponent from '@/components/SearchBarComponent';
-import { BottomSheet, Icon, Avatar, Badge, withBadge } from 'react-native-elements'
+import { BottomSheet, Icon } from 'react-native-elements'
 import FilterCard from '@/components/card/FilterCard';
 import constants from '@/constants';
-
-import List from '@/components/list/List'
 
 
 interface DirectoryProps {
@@ -156,8 +154,8 @@ export default class DirectoryScreen extends React.Component<DirectoryProps>{
             name: 'Abuja'
         }
         ];
-        const chips = [{ id: '0', value: 'List Item 1' },
-        { id: '1', value: 'List Item 2' },]
+        const chips = [{ id: '0', name: 'List Item 1' },
+        { id: '1', name: 'List Item 2' },]/*
         const list = [
             { key: '0', category: 'List Item 1' },
             { key: '1', category: 'List Item 2' },
@@ -167,7 +165,7 @@ export default class DirectoryScreen extends React.Component<DirectoryProps>{
                 titleStyle: { color: 'white' },
                 onPress: () => this.toggleBottomNavigationView,
             },
-        ];
+        ];*/
         const target = 'Service';
         if (this.state.isLoading) {
             return (
@@ -213,6 +211,8 @@ export default class DirectoryScreen extends React.Component<DirectoryProps>{
                 />
 
                 <FilterCard
+                    data={items}
+                    onDeleteFilterTag={this.toggleBottomNavigationView}
                     onPressFilter={this.toggleBottomNavigationView}
                     icon={{ size: 16, color: constants.colors.darkCyan, name: 'filter', type: 'antdesign' }}
                 />
