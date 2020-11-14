@@ -11,7 +11,7 @@ export interface IconTextProps {
     icon: IconProps;
 }
 
-export default function ServiceCategory(props: IconTextProps) {
+export default function IconText(props: IconTextProps) {
     return (
         <Button
             raised={true}
@@ -26,37 +26,17 @@ export default function ServiceCategory(props: IconTextProps) {
 }
 
 const styles = StyleSheet.create({
-    card: {
-        padding: 14,
-        backgroundColor: '#ffffff',
-        width: '100%',
-        elevation: 8,
-    },
-    cardTitle: {
-        color: '#00848c',
-        textAlign: 'left',
-        flexBasis: '80%',
-        fontSize: 16,
-        paddingLeft: 4,
-
-    },
-    cardContent: {
-        display: "flex",
-        flexDirection: "row",
-        alignItems: 'center'
-    },
     button:{
         backgroundColor:'white',
         borderRadius:20,
         paddingHorizontal:12,
-        paddingVertical:4
+        paddingVertical:6,
     },
     title:{
         color: constants.colors.darkCyan,
         fontSize:14,
         fontWeight:'bold',
         paddingLeft:6,
-        paddingVertical:6
     }
 });
 
