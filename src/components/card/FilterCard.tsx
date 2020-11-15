@@ -70,16 +70,6 @@ export default class FilterCard extends React.Component<FilterCardProps>{
     }
 }
 
-/*<View style={{
-    backgroundColor: 'rgb(242,242,242)',
-    paddingLeft: 4,
-    paddingVertical: 6,
-    marginLeft: 14,
-    borderRadius: 30,
-    flexDirection: 'row',
-    width: '75%'
-}}>*/
-
 const styles = StyleSheet.create({
     card: {
         paddingHorizontal: 14,
