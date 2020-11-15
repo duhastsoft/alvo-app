@@ -11,9 +11,13 @@ import BaseButton, { ButtonTypes } from '@/components/buttons/Button';
 import { ListItem, Section, defaultCategory } from '@/constants/Directory';
 import LoadingComponent from '@/components/LoadingComponent'
 import SearchBarComponent from '@/components/SearchBarComponent';
-import { BottomSheet, Icon } from 'react-native-elements'
+import {  Icon } from 'react-native-elements'
 import FilterCard from '@/components/card/FilterCard';
+import Select from '@/components/dropdown/Select';
 import constants from '@/constants';
+import BottomSheet from '@/components/BottomSheet'; 
+import MultiSelect from '@/components/dropdown/MultiSelect';
+
 
 
 interface DirectoryProps {
@@ -37,7 +41,6 @@ export default class DirectoryScreen extends React.Component<DirectoryProps>{
         categories: [] as ListItem[],
         dataSource: [] as ListItem[]
     };
-
     handleBackButtonClick = () => {
         this.setState({
             target: 0,
@@ -153,52 +156,12 @@ export default class DirectoryScreen extends React.Component<DirectoryProps>{
             id: 'suudydjsjd',
             name: 'Abuja'
         }
-        ];
-        const chips = [{ id: '0', name: 'List Item 1' },
-        { id: '1', name: 'List Item 2' },]/*
-        const list = [
-            { key: '0', category: 'List Item 1' },
-            { key: '1', category: 'List Item 2' },
-            {
-                key: '2', category: 'Cancel',
-                containerStyle: { backgroundColor: 'red' },
-                titleStyle: { color: 'white' },
-                onPress: () => this.toggleBottomNavigationView,
-            },
-        ];*/
+        ]
         const target = 'Service';
         if (this.state.isLoading) {
             return (
                 <LoadingComponent text={'Loading directory'} />
             )
-        }
-        if (this.state.isVisible) {
-            return (
-                <BottomSheet modalProps={{
-                    onRequestClose: () => {
-                        Alert.alert("Modal has been closed.");
-                    }
-                }} isVisible={this.state.isVisible}>
-                    <View style={styles.bs_container}>
-                        <View style={styles.bs_title_container}>
-                            <Text style={styles.bs_title}>Filtrar</Text>
-                            <View
-                                style={{
-                                    flexDirection: "row",
-                                    justifyContent: "flex-end"
-                                }}
-                            >
-                                <Icon name={'close'} type={'antdesign'} size={24} color="gray" onPress={this.toggleBottomNavigationView} />
-                            </View>
-                        </View>
-                        <BaseButton
-                            type={ButtonTypes.PRIMARY}
-                            title={'Aplicar'}
-                            onPressEvent={this.toggleBottomNavigationView}
-                        />
-                    </View>
-                </BottomSheet>
-            );
         }
         return (
             <SafeAreaView style={styles.container} >
@@ -216,6 +179,38 @@ export default class DirectoryScreen extends React.Component<DirectoryProps>{
                     onPressFilter={this.toggleBottomNavigationView}
                     icon={{ size: 16, color: constants.colors.darkCyan, name: 'filter', type: 'antdesign' }}
                 />
+                <BottomSheet
+                style={styles.bs}
+                 isVisible={this.state.isVisible}>
+                    <View style={styles.bs_container}>
+                        <View style={styles.bs_header_container}>
+                            <Text style={styles.bs_title}>Filtrar</Text>
+                            <View
+                            >
+                                <Icon name={'close'} type={'antdesign'} size={24} color="gray" onPress={this.toggleBottomNavigationView}  />
+                            </View>
+                        </View>
+                        <View style={styles.bs_body}>
+                        <View style={{ }}>
+                        <Select 
+                        name={'Departamento'}
+                        data = {items}
+                        onPressDropdown = {false}
+                        itemsIcon={{ size: 16, color: constants.colors.darkCyan, name: 'filter', type: 'antdesign' }} />
+                        <MultiSelect 
+                        name={'Municipio'}
+                        data = {items}
+                        onPressDropdown = {false}
+                        itemsIcon={{ size: 16, color: constants.colors.darkCyan, name: 'filter', type: 'antdesign' }} />
+                        </View>
+                        <BaseButton
+                            type={ButtonTypes.YELLOW}
+                            title={'Aplicar'}
+                            onPressEvent={this.toggleBottomNavigationView}
+                        />
+                        </View>
+                    </View>
+                </BottomSheet>
                 <DirectoryScroll
                     image={(this.state.section == Section.Categories) ? BookMarkImage : CustomerSupport}
                     list={this.state.categories}
@@ -252,36 +247,47 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         flexDirection: 'column'
     },
-    bs_container: {
-        flex: 2,
+    bs: {
+        height:500,
         flexDirection: 'column',
         backgroundColor: 'white',
         padding: 14,
         borderTopLeftRadius: 10,
         borderTopRightRadius: 10,
-        borderColor: 'red',
-        borderWidth: 0.2
+        //borderColor: 'red',
+        //borderWidth: 0.2
     },
-    bs_title_container: {
-        flex: 1,
+    bs_container: {
+        flex:1,
+        flexDirection: 'column',
+        //borderColor: 'red',
+        //borderWidth: 0.2,
+        justifyContent:'space-between'
+    },
+    bs_header_container: {
         flexDirection: 'row',
+        justifyContent:'space-between',
         paddingBottom: 8,
-        alignItems: 'center',
         borderColor: 'white',
         borderBottomColor: '#cfd8dc',
-        borderWidth: 1.6
+        borderWidth: 1.6,
+        marginBottom:20
+    },
+    bs_body:{
+        flex:1,
+        flexDirection: 'column',
+        justifyContent:'space-between',
     },
     bs_title: {
         fontSize: 28,
-        color: 'black',
+        color: constants.colors.darkCyan,
         fontWeight: 'bold',
-        borderColor: 'green',
-        borderWidth: 0.2
+        //borderColor: 'green',
+        //borderWidth: 0.5
     },
     bs_title_icon: {
-        alignSelf: 'flex-end',
-        borderColor: 'green',
-        borderWidth: 0.2
+        //borderColor: 'green',
+        //borderWidth: 0.2
     },
     filters_container: {
         flex: 1,
