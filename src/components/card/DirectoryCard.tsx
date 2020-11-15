@@ -4,10 +4,10 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { Icon,IconProps } from "react-native-elements";
 
 export interface CardCategoryProps {
-    index: number,
+    id: string,
     name: string,
     style?: StyleProp<ViewStyle>,
-    onPress?: (index: number) => void;
+    onPress?: (index: string) => void;
     icon: IconProps;
 }   
 
@@ -15,25 +15,26 @@ export default class ServiceCategory extends React.Component<CardCategoryProps>{
     constructor(props: CardCategoryProps){
         super(props);
     }
-    buttonPress (indexS: number){
+    buttonPress (indexS: string){
         this.props.onPress!(indexS);
     }
     
     render(){
+        const {id, name, icon} = this.props;
         return(
             <TouchableOpacity
             style={[styles.card, this.props.style]}
             onPress={()=>{
                 if(this.props.onPress)
-                    this.buttonPress(this.props.index)
+                    this.buttonPress(id)
             }}
             activeOpacity={0.8}
             >
                 <View style={styles.cardContent}>
 
                     <Icon 
-                    name={this.props.icon.name} type={this.props.icon.type} size={this.props.icon.size} color={this.props.icon.color} />
-                    <Text style={styles.cardTitle}>{this.props.name}</Text>
+                    name={icon.name} type={icon.type} size={icon.size} color={icon.color} />
+                    <Text style={styles.cardTitle}>{name}</Text>
                 </View>
             </TouchableOpacity>
         )

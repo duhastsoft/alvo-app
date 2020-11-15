@@ -5,7 +5,7 @@ import {Icon, SearchBar} from 'react-native-elements';
 interface SearchBarProps{
     returnButton: boolean;
     textValue: string;
-    onPress: () => void;
+    onPress?: () => void;
     onChangeText: (text: string) => void;
 }
 
@@ -15,7 +15,9 @@ export default function SearchBarComponent(props: SearchBarProps){
                 <View style={(props.returnButton)? styles.viewIcon:styles.viewNoIcon} >
                     <Icon style={styles.icon}
                     name={'chevron-left'} 
-                    onPress={()=>props.onPress()}  
+                    onPress={()=>{if(props.onPress){
+                        props.onPress();
+                    }}}  
                 />
                 </View>
                 <View style={styles.searchBar}>
@@ -67,7 +69,7 @@ const styles = StyleSheet.create({
         borderBottomWidth: 0.2,
     },
     inputContainerStyle:{
-        backgroundColor:'rgb(242,242,242)',
+        backgroundColor:'#f2f2f2',
         borderRadius:10,
     },
 });

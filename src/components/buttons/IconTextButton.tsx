@@ -15,6 +15,7 @@ export default function IconText(props: IconTextProps) {
     return (
         <Button
             raised={true}
+            
             buttonStyle={styles.button}
             title={props.name}
             titleStyle={styles.title}
@@ -27,7 +28,7 @@ export default function IconText(props: IconTextProps) {
 
 const styles = StyleSheet.create({
     button:{
-        backgroundColor:'white',
+        backgroundColor:'#ffffff',
         borderRadius:20,
         paddingHorizontal:12,
         paddingVertical:6,

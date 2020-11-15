@@ -2,20 +2,13 @@ import React from "react";
 import { TouchableOpacity, View, StyleSheet, ViewStyle, StyleProp, Alert, Text, FlatList } from "react-native";
 import { Icon, IconProps } from "react-native-elements";
 import constants from '@/constants';
-import FilterButton from '@/components/buttons/IconTextButton';
-import Chip from '@/components/buttons/Chip';
-import List from '@/components/list/List';
+import {CategoryItem} from '@/constants/Directory'
 
 //tags of selected filter appear on the left side and filter button on the right side
-export interface ItemProps {
-    id: string;
-    name: string;
-}
-
 export interface SelectProps {
     name: string;
     style?: StyleProp<ViewStyle>,
-    data?: Array<ItemProps>;
+    data?: Array<CategoryItem>;
     onPressDropdown: boolean;
     onSelectItem?: (index: string) => void;
     itemsIcon: IconProps;
@@ -33,6 +26,7 @@ export default class Select extends React.Component<SelectProps>{
             
         }
     }
+
     dropdownListView = () => {
         //Toggling the visibility state of the bottom sheet
         this.setState({
@@ -57,6 +51,24 @@ export default class Select extends React.Component<SelectProps>{
         }
     };
 
+    renderItem = ({ item }: { item: CategoryItem }) => (
+        <TouchableOpacity
+                        style={[styles.item, this.props.style,{backgroundColor:'rgba(0, 132, 140,0.2)'}]}
+                        onPress={() => {
+                            if (this.props.onSelectItem)
+                                this.itemPress(item.id.toString());
+                        }}
+                        activeOpacity={0.8}
+>
+                        <View style={styles.cardContent}>
+                            <Text style={styles.dropdown_placeholder}>{item.name}</Text>
+                            <Icon
+                                name={'check'} type={'feather'} size={24} color={this.props.itemsIcon.color} />
+
+                        </View>
+                    </TouchableOpacity>
+    )
+
     render() {
         if (this.state.onPressDropdown){
             return(
@@ -77,22 +89,8 @@ export default class Select extends React.Component<SelectProps>{
                     height:140,
                 }}
                 data={this.props.data}
-                renderItem={({ item }) =>
-                    <TouchableOpacity
-                        style={[styles.item, this.props.style,{backgroundColor:'rgba(0, 132, 140,0.2)'}]}
-                        onPress={() => {
-                            if (this.props.onSelectItem)
-                                this.itemPress(item.id);
-                        }}
-                        activeOpacity={0.8}
-                    >
-                        <View style={styles.cardContent}>
-                            <Text style={styles.dropdown_placeholder}>{item.name}</Text>
-                            <Icon
-                                name={'check'} type={'feather'} size={24} color={this.props.itemsIcon.color} />
-
-                        </View>
-                    </TouchableOpacity>}
+                keyExtractor={item => item.id.toString()}
+                        renderItem={this.renderItem}
 
             />
             </View>

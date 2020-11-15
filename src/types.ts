@@ -6,7 +6,7 @@ export type RootStackParamList = {
     limit?: number;
   };
   Service: {
-    id?: number;
+    id?: string;
   };
 };
 

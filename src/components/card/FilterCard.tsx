@@ -4,16 +4,12 @@ import { Icon, IconProps } from "react-native-elements";
 import constants from '@/constants';
 import FilterButton from '@/components/buttons/IconTextButton';
 import Chip from '@/components/buttons/Chip';
+import {CategoryItem} from '@/constants/Directory'
 
-//tags of selected filter appear on the left side and filter button on the right side
-export interface ItemProps {
-    id: string;
-    name: string;
-}
 
 export interface FilterCardProps {
     style?: StyleProp<ViewStyle>,
-    data?: Array<ItemProps>;
+    data?: Array<CategoryItem>;
     onPressFilter: () => void;
     onDeleteFilterTag?: (index: string) => void;
     icon: IconProps;
@@ -28,24 +24,28 @@ export default class FilterCard extends React.Component<FilterCardProps>{
         this.props.onDeleteFilterTag!(indexS);
     }
 
+    renderItem = ({ item }: { item: CategoryItem }) => (
+        <Chip name={item.name}
+            key={item.id}
+            onPress={() => {
+                if (this.props.onDeleteFilterTag){
+                    this.buttonPress(item.id)
+                }
+        }} />
+    );
+
     render() {
         return (
             <View
                 style={[styles.card, this.props.style]}
             >
                 <View style={styles.cardContent}>
-
                     <FlatList
                         showsHorizontalScrollIndicator={false}
                         horizontal={true} style={{ backgroundColor: 'rgb(242,242,242)', paddingVertical: 6, borderRadius: 30, marginBottom: 8 }}
                         data={this.props.data}
-                        renderItem={({ item }) =>
-                            <Chip name={item.name}
-                                onPress={() => {
-                                    if (this.props.onDeleteFilterTag)
-                                        this.buttonPress(item.id)
-                                }} />}
-
+                        keyExtractor={item => item.id.toString()}
+                        renderItem={this.renderItem}
                     />
 
                     <View
