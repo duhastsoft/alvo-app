@@ -1,0 +1,163 @@
+import React from "react";
+import { TouchableOpacity, View, StyleSheet, ViewStyle, StyleProp, Alert, Text, FlatList } from "react-native";
+import { Icon, IconProps } from "react-native-elements";
+import constants from '@/constants';
+import FilterButton from '@/components/buttons/IconTextButton';
+import Chip from '@/components/buttons/Chip';
+import List from '@/components/list/List';
+
+//tags of selected filter appear on the left side and filter button on the right side
+export interface ItemProps {
+    id: string;
+    name: string;
+}
+
+export interface MultiSelectProps {
+    name: string;
+    style?: StyleProp<ViewStyle>,
+    data?: Array<ItemProps>;
+    onPressDropdown: boolean;
+    onSelectItem?: (index: string) => void;
+    itemsIcon: IconProps;
+}
+
+export default class MultiSelect extends React.Component<MultiSelectProps>{
+    constructor(props: MultiSelectProps) {
+        super(props);
+    }
+
+    state = {
+        onPressDropdown: false,
+        color: '#cfd8dc',
+        itemSelected:{
+            iconColor: constants.colors.darkCyan,
+            background: 'rgba(0, 132, 140,0.2)'
+        }
+    }
+    dropdownListView = () => {
+        //Toggling the visibility state of the bottom sheet
+        this.setState({
+            onPressDropdown: !this.state.onPressDropdown,
+        });
+        this.changeColor();
+    };
+    itemPress(indexS: string) {
+        this.props.onSelectItem!(indexS);
+    }
+
+    changeColor(){
+        if(this.state.onPressDropdown){
+            this.setState({
+                color: constants.colors.darkCyan
+            });
+        } else {
+            this.setState({
+                color: '#cfd8dc'
+            });
+        }
+    };
+
+    render() {
+        if (this.state.onPressDropdown){
+            return(
+                <View
+                style={[styles.card, this.props.style]}
+            >
+                <Text style={styles.dropdown_title}>{this.props.name}</Text>
+                <View style={[styles.dropdown_header,{borderColor:this.state.color}]}>
+                    <Text style={styles.dropdown_placeholder}>{this.props.name}</Text>
+                    <Icon
+                        name='ios-arrow-down' type='ionicon' size={24} color={this.state.color} onPress={this.dropdownListView}/>
+                </View>
+                <FlatList
+                style={{
+                    borderBottomLeftRadius: 10,
+                    borderBottomRightRadius: 10,
+                    marginBottom: 8,
+                    height:120
+                }}
+                data={this.props.data}
+                renderItem={({ item }) =>
+                    <TouchableOpacity
+                        style={[styles.card, this.props.style]}
+                        onPress={() => {
+                            if (this.props.onSelectItem)
+                                this.itemPress(item.id)
+                        }}
+                        activeOpacity={0.8}
+                    >
+                        <View style={styles.cardContent}>
+                            <Text style={styles.dropdown_placeholder}>{item.name}</Text>
+                            <Icon
+                                name={'check'} type={'feather'} size={this.props.itemsIcon.size} color={this.props.itemsIcon.color} />
+
+                        </View>
+                    </TouchableOpacity>}
+
+            />
+            </View>
+            );
+            
+        }else{ 
+        return (
+            <View
+                style={[styles.card, this.props.style]}
+            >
+                <Text style={styles.dropdown_title}>{this.props.name}</Text>
+                <View style={[styles.dropdown_header,{borderColor:this.state.color}]}>
+                    <Text style={styles.dropdown_placeholder}>{this.props.name}</Text>
+                    <Icon
+                        name='ios-arrow-down' type='ionicon' size={24} color={this.state.color} onPress={this.dropdownListView} style={{ //borderColor: 'green',
+                        //borderWidth: 0.5
+                    }}/>
+                </View>
+            </View>
+        );}
+    }
+}
+
+const styles = StyleSheet.create({
+    card: {
+        backgroundColor: '#ffffff',
+        width: '100%',
+        marginBottom:14
+    },
+    cardTitle: {
+        color: '#00848c',
+        textAlign: 'left',
+        flexBasis: '80%',
+        fontSize: 16,
+        paddingLeft: 4,
+
+    },
+    dropdown_header: {
+        display: "flex",
+        flexDirection: "row",
+        borderColor:'#cfd8dc',
+        borderWidth: 1.6,
+        borderRadius: 10,
+        paddingHorizontal: 14,
+        paddingVertical:10,
+        justifyContent:'space-between',
+    },
+    dropdown_title:{
+        fontSize:18,
+        color:'gray',
+        fontWeight:'bold',
+        marginBottom:12
+    },
+    dropdown_placeholder:{
+        fontSize:18,
+        color:'gray',
+        //borderColor: 'green',
+        //borderWidth: 0.5
+    },
+    cardContent: {
+        display: "flex",
+        flexDirection: "row",
+        alignItems: 'center',
+        paddingHorizontal: 14,
+        paddingVertical:10,
+        justifyContent:'space-between'
+    }
+});
