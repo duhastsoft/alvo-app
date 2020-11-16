@@ -1,5 +1,6 @@
 import constants from '@/constants';
 import QuizScreen from '@/screens/QuizScreen';
+import ResultsScreen from '@/screens/ResultsScreen';
 import ServiceScreen from '@/screens/ServiceScreen';
 import { RootStackParamList } from '@/types';
 import { NavigationContainer, getFocusedRouteNameFromRoute, } from '@react-navigation/native';
@@ -25,6 +26,7 @@ export default function Navigation() {
         })} />
         <Stack.Screen name="Quiz" component={QuizScreen} options={{ title: 'Examen de manejo' }} />
         <Stack.Screen name="Service" component={ServiceScreen} options={{title: 'Servicio'}}/>
+        <Stack.Screen name="Results" component={ResultsScreen} options={{title: 'Resultados', headerShown:false}}/>
       </Stack.Navigator>
     </NavigationContainer>
   );

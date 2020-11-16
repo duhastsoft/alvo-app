@@ -8,13 +8,18 @@ export type RootStackParamList = {
   Service: {
     id?: string;
   };
+  Results: {
+    score: number;
+    correctAnswers: number;
+    numberQuestions: number;
+  };
 };
 
 export type DirectoryStackParamList = {
-  Directory:undefined;
-  DirectorybyCategory:undefined;
-  ServiceProfile:undefined;
-}
+  Directory: undefined;
+  DirectorybyCategory: undefined;
+  ServiceProfile: undefined;
+};
 
 export type BottomTabParamList = {
   Home: undefined;

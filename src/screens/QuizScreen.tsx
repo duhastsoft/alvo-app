@@ -23,6 +23,7 @@ interface Question {
 interface QuizState {
   loading: boolean;
   counter: number;
+  correctAnswers: number;
   selectedIndex: number;
   selectedAnswer: number;
   answerConfirmed: boolean;
@@ -30,7 +31,7 @@ interface QuizState {
 }
 
 interface QuizProps {
-  navigator: StackNavigationProp<RootStackParamList, 'Quiz'>;
+  navigation: StackNavigationProp<RootStackParamList, 'Quiz'>;
   route: RouteProp<RootStackParamList, 'Quiz'>;
 }
 
@@ -38,6 +39,7 @@ export default class QuizScreen extends Component<QuizProps, QuizState> {
   state: QuizState = {
     loading: true,
     counter: 0,
+    correctAnswers: 0,
     selectedIndex: -1,
     selectedAnswer: -1,
     answerConfirmed: false,
@@ -69,15 +71,28 @@ export default class QuizScreen extends Component<QuizProps, QuizState> {
   };
 
   nextQuestionHandler = () => {
+    const { navigation } = this.props;
+    const { questions, selectedAnswer, counter } = this.state;
     if (this.state.answerConfirmed) {
-      if (this.state.counter < this.state.questions!.length - 1) {
+      if (counter < this.state.questions!.length - 1) {
+        if (questions![counter].rightAnswer === selectedAnswer) {
+          this.setState((prev) => ({ correctAnswers: prev.correctAnswers + 1 }));
+        }
+
         this.setState((prevState) => ({
           counter: prevState.counter + 1,
           selectedAnswer: -1,
           selectedIndex: -1,
           answerConfirmed: false,
         }));
-      } else alert('Examen finalizado');
+      } else {
+        const score = (this.state.correctAnswers / this.state.questions!.length) * 10;
+        navigation.replace('Results', {
+          score,
+          correctAnswers: this.state.correctAnswers,
+          numberQuestions: this.state.questions!.length,
+        });
+      }
     } else if (this.state.selectedIndex != -1) {
       this.setState({ answerConfirmed: true });
     } else {
