@@ -1,4 +1,5 @@
 export type RootStackParamList = {
+  Login: undefined;
   Root: undefined;
   Quiz: {
     category?: number;

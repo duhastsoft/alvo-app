@@ -1,9 +1,10 @@
 import constants from '@/constants';
+import LoginScreen from '@/screens/LoginScreen';
 import QuizScreen from '@/screens/QuizScreen';
 import ResultsScreen from '@/screens/ResultsScreen';
 import ServiceScreen from '@/screens/ServiceScreen';
 import { RootStackParamList } from '@/types';
-import { NavigationContainer, getFocusedRouteNameFromRoute, } from '@react-navigation/native';
+import { NavigationContainer, getFocusedRouteNameFromRoute } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
 import BottomTabsNavigator from './BottomTabsNavigator';
@@ -21,12 +22,21 @@ export default function Navigation() {
           },
         }}
       >
-        <Stack.Screen name="Root" component={BottomTabsNavigator} options={({ route }) => ({
-          headerTitle: getHeaderTitle(route),
-        })} />
+        <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
+        <Stack.Screen
+          name="Root"
+          component={BottomTabsNavigator}
+          options={({ route }) => ({
+            headerTitle: getHeaderTitle(route),
+          })}
+        />
         <Stack.Screen name="Quiz" component={QuizScreen} options={{ title: 'Examen de manejo' }} />
-        <Stack.Screen name="Service" component={ServiceScreen} options={{title: 'Servicio'}}/>
-        <Stack.Screen name="Results" component={ResultsScreen} options={{title: 'Resultados', headerShown:false}}/>
+        <Stack.Screen name="Service" component={ServiceScreen} options={{ title: 'Servicio' }} />
+        <Stack.Screen
+          name="Results"
+          component={ResultsScreen}
+          options={{ title: 'Resultados', headerShown: false }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
