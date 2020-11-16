@@ -42,7 +42,7 @@ export default class FilterCard extends React.Component<FilterCardProps>{
                 <View style={styles.cardContent}>
                     <FlatList
                         showsHorizontalScrollIndicator={false}
-                        horizontal={true} style={{ backgroundColor: 'rgb(242,242,242)', paddingVertical: 6, borderRadius: 30, marginBottom: 8 }}
+                        horizontal={true} style={{ backgroundColor: 'rgb(242,242,242)', paddingVertical: 6, borderRadius: 30, marginBottom: 8, minHeight:28}}
                         data={this.props.data}
                         keyExtractor={item => item.id.toString()}
                         renderItem={this.renderItem}
