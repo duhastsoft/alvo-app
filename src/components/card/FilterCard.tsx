@@ -4,12 +4,12 @@ import { Icon, IconProps } from "react-native-elements";
 import constants from '@/constants';
 import FilterButton from '@/components/buttons/IconTextButton';
 import Chip from '@/components/buttons/Chip';
-import {CategoryItem} from '@/constants/Directory'
+import {ListItem} from '@/constants/Directory'
 
 
 export interface FilterCardProps {
     style?: StyleProp<ViewStyle>,
-    data?: Array<CategoryItem>;
+    data?: Array<ListItem>;
     onPressFilter: () => void;
     onDeleteFilterTag?: (index: string) => void;
     icon: IconProps;
@@ -24,7 +24,7 @@ export default class FilterCard extends React.Component<FilterCardProps>{
         this.props.onDeleteFilterTag!(indexS);
     }
 
-    renderItem = ({ item }: { item: CategoryItem }) => (
+    renderItem = ({ item }: { item: ListItem }) => (
         <Chip name={item.name}
             key={item.id}
             onPress={() => {

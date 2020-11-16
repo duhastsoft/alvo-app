@@ -2,14 +2,14 @@ import React from "react";
 import { TouchableOpacity, View, StyleSheet, ViewStyle, StyleProp, Alert, Text, FlatList } from "react-native";
 import { Icon, IconProps } from "react-native-elements";
 import constants from '@/constants';
-import {CategoryItem} from '@/constants/Directory'
+import {ListItem} from '@/constants/Directory'
 
 //tags of selected filter appear on the left side and filter button on the right side
 
 export interface MultiSelectProps {
     name: string;
     style?: StyleProp<ViewStyle>,
-    data?: Array<CategoryItem>;
+    data?: Array<ListItem>;
     onPressDropdown: boolean;
     onSelectItem?: (index: string) => void;
     itemsIcon: IconProps;
@@ -51,7 +51,7 @@ export default class MultiSelect extends React.Component<MultiSelectProps>{
         }
     };
 
-    renderItem = ({ item }: { item: CategoryItem }) => (
+    renderItem = ({ item }: { item: ListItem }) => (
         <TouchableOpacity
         style={[styles.card, this.props.style]}
         onPress={() => {

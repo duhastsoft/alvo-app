@@ -6,7 +6,8 @@ import DirectoryScroll from '@/components/scroll-views/DirectoryScroll';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { BottomTabParamList } from '@/types';
 import BaseButton, { ButtonTypes } from '@/components/buttons/Button';
-import { CategoryItem, ServiceItem, Section, defaultCategory, wellWrittenC, wellWrittenS } from '@/constants/Directory';
+import { ServiceItem,  Section, 
+    defaultCategory, wellWrittenC, wellWrittenS, ListItem, functionCast } from '@/constants/Directory';
 import LoadingComponent from '@/components/LoadingComponent'
 import SearchBarComponent from '@/components/SearchBarComponent';
 import {  Icon } from 'react-native-elements'
@@ -25,15 +26,18 @@ export default class DirectoryScreen extends React.Component<DirectoryProps>{
     constructor(props: DirectoryProps) {
         super(props);
         this.selectService = this.selectService.bind(this);
+        this.onSelectedItemsChange = this.onSelectedItemsChange.bind(this);
     }
 
     state = {
         isLoading: true,
         isVisible: false,
-        search: '',
-        section: Section.Categories,
-        target: '0',
-        categories: [] as CategoryItem[],
+        search: {
+            text: '',
+            filters: [] as ListItem[],
+            selectedCategory: '0'
+        },
+        categories: [] as ListItem[],
         services: [] as ServiceItem[],
         dataSource: [] as ServiceItem[]
     };
@@ -44,8 +48,18 @@ export default class DirectoryScreen extends React.Component<DirectoryProps>{
         });
     };
 
-    onSelectedItemsChange = (selectedItems: any) => {
-        this.setState({ selectedItems });
+    onSelectedItemsChange(selected: ListItem, filterIndex: number)  {
+        const {search} = this.state;
+        const castFilter = functionCast(selected);
+        search.filters[filterIndex] = castFilter;
+        if(filterIndex==0){
+            if(selected.id!='0')
+                this.state.services = this.state.dataSource.filter(e=> e.categoryId==selected.id);
+            else
+                this.state.services = this.state.dataSource;
+            this.state.search.text = '';
+            this.state.search.selectedCategory = selected.id;
+        }
     };
 
     selectService(target: string): void {
@@ -63,34 +77,35 @@ export default class DirectoryScreen extends React.Component<DirectoryProps>{
         });
         this.setState({
             services: newData,
-            search: text
+            search: {...this.state.search, text}
         });
     }
 
     loadContent() {
         const requestCategories = '/service-category/all';
         const requestServices = '/service/all';
-        const requestSpecific = '/service-category/' + this.state.target;
+        const requestSpecific = '/service-category/';
         const fetchData = async () => {
             try {
                 const resultCategories = await Axios.get(requestCategories);
                 const resultServices = await Axios.get(requestServices);
-                //const itemsArray = (this.state.target == 0) ? result.data.data : result.data.data.services;
                 const arrayCategories = resultCategories.data.data;
-                const newCategories = arrayCategories.map((e:CategoryItem)=>wellWrittenC(e));
+                const newCategories : Array<ListItem> = arrayCategories.map((e:ListItem)=>wellWrittenC(e));
                 const categories = [...newCategories];
+                categories.unshift(defaultCategory);
                 
                 const arrayServices = resultServices.data.data;
-                const newServices = arrayServices.map((e:ServiceItem)=>wellWrittenS(e));
+                const newServices : Array<ServiceItem> = arrayServices.map((e:ServiceItem)=>wellWrittenS(e));
                 const services = [...newServices];
-                
+            
                 this.state.dataSource = services;
                 this.state.categories = categories;
                 this.state.services = services;
 
+                this.state.search.filters[0] = defaultCategory;
+
             }
             catch (err) {
-                console.log(err);
                 this.state.dataSource = [];
                 this.state.services = [];
             }
@@ -106,30 +121,27 @@ export default class DirectoryScreen extends React.Component<DirectoryProps>{
     }
 
     render() {
-        const { categories, services, section, isLoading, search, isVisible } = this.state;
+        const { categories, services, isLoading, search, isVisible } = this.state;
         if (isLoading) {
-            return (
-                <LoadingComponent text={'Loading directory'} />
-            )
+            return (<LoadingComponent text={'Loading directory'} />)
         }
         return (
             <SafeAreaView style={styles.container} >
 
                 <SearchBarComponent
                     onChangeText={this.searchFilterFunction}
-                    textValue={search}
+                    textValue={search.text}
                     returnButton={false}
                 />
 
                 <FilterCard
-                    data={categories}
+                    data={search.filters}
                     onDeleteFilterTag={this.toggleBottomNavigationView}
                     onPressFilter={this.toggleBottomNavigationView}
                     icon={{ size: 16, color: constants.colors.darkCyan, name: 'filter', type: 'antdesign' }}
                 />
                 
-
-            <BottomSheet
+                <BottomSheet
                 style={styles.bs}
                  isVisible={isVisible}>
                     <View style={styles.bs_container}>
@@ -141,11 +153,14 @@ export default class DirectoryScreen extends React.Component<DirectoryProps>{
                         </View>
                         <View style={styles.bs_body}>
                         <View>
-                        <Select 
-                        name={'Categoria'}
-                        data = {categories}
-                        onPressDropdown = {false}
-                        itemsIcon={{ size: 16, color: constants.colors.darkCyan, name: 'filter', type: 'antdesign' }} />
+                            <Select 
+                            title={'Categoria'}
+                            data = {categories}
+                            onPressDropdown = {false}
+                            filterIndex={0}
+                            selectedIndex={search.selectedCategory}
+                            onSelectItem={this.onSelectedItemsChange}
+                            itemsIcon={{ size: 16, color: constants.colors.darkCyan, name: 'filter', type: 'antdesign' }} />
                         </View>
                         <BaseButton
                             type={ButtonTypes.YELLOW}
@@ -159,9 +174,9 @@ export default class DirectoryScreen extends React.Component<DirectoryProps>{
                 <DirectoryScroll
                     list={services}
                     onPressItem={this.selectService}
-                    key={section}
+                    key={Section.Categories}
                     style={styles.directoryScroll}
-                    header={(section == Section.Categories) ? false : true}
+                    header={false}
                 />
                 <StatusBar style="auto" />
             </SafeAreaView>

@@ -1,33 +1,38 @@
-export enum Section {
+enum Section {
     Categories = 1,
     Services = 2
 }
 
-export interface CategoryItem {
+interface ListItem{
     name: string;
     id: string;
 }
 
-export interface ServiceItem{
-    name: string;
-    id: string;
+interface ServiceItem extends ListItem{
     categoryId: string;
 }
 
-export const defaultCategory: CategoryItem = {
-    name: 'Todas las categorias',
+const defaultCategory: ListItem = {
+    name: 'Todas',
     id: '0'
 }
 
-export function wellWrittenC(item: CategoryItem){
+function functionCast(item: ListItem|ServiceItem){
+    return{
+        name: item.name,
+        id: item.id
+    } as ListItem
+}
+
+function wellWrittenC(item: ListItem){
     const formal = item.name[0].toUpperCase() + item.name.slice(1);
         return {
             name: formal,
             id: item.id
-    } as CategoryItem
+    } as ListItem
 }
 
-export function wellWrittenS(item: ServiceItem){
+function wellWrittenS(item: ServiceItem){
     const formal = item.name[0].toUpperCase() + item.name.slice(1);
         return {
             name: formal,
@@ -35,3 +40,5 @@ export function wellWrittenS(item: ServiceItem){
             categoryId: item.categoryId
     } as ServiceItem
 }
+
+export {Section, ListItem,ServiceItem, defaultCategory, functionCast, wellWrittenC, wellWrittenS}

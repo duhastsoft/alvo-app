@@ -2,15 +2,17 @@ import React from "react";
 import { TouchableOpacity, View, StyleSheet, ViewStyle, StyleProp, Alert, Text, FlatList } from "react-native";
 import { Icon, IconProps } from "react-native-elements";
 import constants from '@/constants';
-import {CategoryItem} from '@/constants/Directory'
+import {ListItem} from '@/constants/Directory'
 
 //tags of selected filter appear on the left side and filter button on the right side
 export interface SelectProps {
-    name: string;
+    title: string;
     style?: StyleProp<ViewStyle>,
-    data?: Array<CategoryItem>;
+    data?: Array<ListItem>;
     onPressDropdown: boolean;
-    onSelectItem?: (index: string) => void;
+    selectedIndex: string;
+    filterIndex: number;
+    onSelectItem: (index: ListItem, filterI: number) => void;
     itemsIcon: IconProps;
 }
 
@@ -22,65 +24,50 @@ export default class Select extends React.Component<SelectProps>{
     state = {
         onPressDropdown: false,
         color: '#cfd8dc',
-        itemSelected:{
-            
-        }
+        currentSelected: this.props.data?.find(e=>e.id==this.props.selectedIndex) as ListItem
     }
 
     dropdownListView = () => {
         //Toggling the visibility state of the bottom sheet
+        const color = (this.state.onPressDropdown) ? constants.colors.darkCyan: '#cfd8dc';
         this.setState({
             onPressDropdown: !this.state.onPressDropdown,
+            color,
         });
-        this.changeColor();
     };
     itemPress(indexS: string) {
-        this.props.onSelectItem!(indexS);
+        const selected = this.props.data?.find(e=>e.id==indexS) as ListItem;
+        this.props.onSelectItem(selected, this.props.filterIndex);
         this.dropdownListView();
+        this.setState({currentSelected: selected});
     }
 
-    changeColor(){
-        if(this.state.onPressDropdown){
-            this.setState({
-                color: constants.colors.darkCyan
-            });
-        } else {
-            this.setState({
-                color: '#cfd8dc'
-            });
-        }
-    };
-
-    renderItem = ({ item }: { item: CategoryItem }) => (
+    renderItem = ({ item }: { item: ListItem }) => (
         <TouchableOpacity
-                        style={[styles.item, this.props.style,{backgroundColor:'rgba(0, 132, 140,0.2)'}]}
-                        onPress={() => {
-                            if (this.props.onSelectItem)
-                                this.itemPress(item.id.toString());
-                        }}
-                        activeOpacity={0.8}
+                style={[this.props.style, (this.state.currentSelected.id==item.id)?styles.item_selected:styles.item]}
+                onPress={() => {this.itemPress(item.id);
+                }}
+                activeOpacity={0.8}
 >
-                        <View style={styles.cardContent}>
-                            <Text style={styles.dropdown_placeholder}>{item.name}</Text>
-                            <Icon
-                                name={'check'} type={'feather'} size={24} color={this.props.itemsIcon.color} />
-
-                        </View>
-                    </TouchableOpacity>
+                <View style={styles.cardContent}>
+                    <Text style={styles.dropdown_placeholder}>{item.name}</Text>
+                    {this.state.currentSelected.id==item.id &&
+                    <Icon name={'check'} type={'feather'} size={24} color={this.props.itemsIcon.color} />
+                    }
+                </View>
+        </TouchableOpacity>
     )
 
     render() {
         if (this.state.onPressDropdown){
             return(
-                <View
-                style={[styles.card, this.props.style]}
-            >
-                <Text style={styles.dropdown_title}>{this.props.name}</Text>
-                <View style={[styles.dropdown_header,{borderColor:this.state.color}]}>
-                    <Text style={styles.dropdown_placeholder}>{this.props.name}</Text>
+                <View style={[styles.card, this.props.style]}>
+                <Text style={styles.dropdown_title}>{this.props.title}</Text>
+                <TouchableOpacity style={[styles.dropdown_header,{borderColor:this.state.color}]} onPress={this.dropdownListView}>
+                    <Text style={styles.dropdown_placeholder}>{this.state.currentSelected.name}</Text>
                     <Icon
-                        name='ios-arrow-down' type='ionicon' size={24} color={this.state.color} onPress={this.dropdownListView}/>
-                </View>
+                        name='ios-arrow-down' type='ionicon' size={24} color={this.state.color} />
+                </TouchableOpacity>
                 <FlatList
                 style={{
                     //backgroundColor: 'green',
@@ -98,17 +85,16 @@ export default class Select extends React.Component<SelectProps>{
             
         }else{ 
         return (
-            <View
-                style={[styles.card, this.props.style]}
-            >
-                <Text style={styles.dropdown_title}>{this.props.name}</Text>
-                <View style={[styles.dropdown_header,{borderColor:this.state.color}]}>
-                    <Text style={styles.dropdown_placeholder}>{this.props.name}</Text>
+            <View style={[styles.card, this.props.style]}>
+                <Text style={styles.dropdown_title}>{this.props.title}</Text>
+                <TouchableOpacity style={[styles.dropdown_header,{borderColor:this.state.color}]} onPress={this.dropdownListView} >
+                    <Text style={styles.dropdown_placeholder}>{this.state.currentSelected.name}</Text>
                     <Icon
-                        name='ios-arrow-down' type='ionicon' size={24} color={this.state.color} onPress={this.dropdownListView} style={{ //borderColor: 'green',
+                        name='ios-arrow-down' type='ionicon' size={24} color={this.state.color} 
+                        style={{ //borderColor: 'green',
                         //borderWidth: 0.5
                     }}/>
-                </View>
+                </TouchableOpacity>
             </View>
         );}
     }
@@ -151,6 +137,7 @@ const styles = StyleSheet.create({
         //borderWidth: 0.5
     },
     cardContent: {
+        color: '#00848c',
         display: "flex",
         flexDirection: "row",
         alignItems: 'center',
@@ -161,5 +148,12 @@ const styles = StyleSheet.create({
     item:{
         backgroundColor: 'white',
         width: '100%',
+    },
+    item_selected:{
+        backgroundColor: 'rgba(0, 132, 140,0.2)',
+        width: '100%',
+    },
+    no_visible:{
+        display: "none"
     }
 });
