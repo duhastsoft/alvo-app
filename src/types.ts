@@ -13,6 +13,7 @@ export type RootStackParamList = {
     correctAnswers: number;
     numberQuestions: number;
   };
+  Maps: {};
 };
 
 export type DirectoryStackParamList = {
