@@ -1,187 +1,254 @@
 import React from 'react';
-import {ActivityIndicator, View, StyleSheet, SafeAreaView} from 'react-native';
-import {Icon, SearchBar} from 'react-native-elements';
+import { StyleSheet, SafeAreaView, Button, View, Alert, Text, TouchableOpacity } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
-import BookMarkImage from '@/assets/images/bookmark-1.png';
-import CustomerSupport from '@/assets/images/customer-support-1.png';
 import Axios from 'axios';
 import DirectoryScroll from '@/components/scroll-views/DirectoryScroll';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { BottomTabParamList } from '@/types';
+import BaseButton, { ButtonTypes } from '@/components/buttons/Button';
+import { ServiceItem,  Section, 
+    defaultCategory, wellWrittenC, wellWrittenS, ListItem, functionCast } from '@/constants/Directory';
+import LoadingComponent from '@/components/LoadingComponent'
+import SearchBarComponent from '@/components/SearchBarComponent';
+import {  Icon } from 'react-native-elements'
+import FilterCard from '@/components/card/FilterCard';
+import Select from '@/components/dropdown/Select';
+import constants from '@/constants';
+import BottomSheet from '@/components/BottomSheet'; 
+import MultiSelect from '@/components/dropdown/MultiSelect';
 
 
-interface ListItem {
-    name: string;
-    id: number;
+interface DirectoryProps {
+    navigation: StackNavigationProp<BottomTabParamList, 'Directory'>;
 }
 
-const defaultCategory: ListItem = {
-    name: 'TODAS LAS CATEGORIAS',
-    id: 0
-}
-
-export default class DirectoryScreen extends React.Component{
-    constructor(props: {}){
+export default class DirectoryScreen extends React.Component<DirectoryProps>{
+    constructor(props: DirectoryProps) {
         super(props);
-        this.selectCategory = this.selectCategory.bind(this);
-        this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
+        this.selectService = this.selectService.bind(this);
+        this.onSelectedItemsChange = this.onSelectedItemsChange.bind(this);
     }
 
     state = {
-        isLoading: true, 
-        search: '', 
-        section: 1,
-        target: 0,
+        isLoading: true,
+        isVisible: false,
+        search: {
+            text: '',
+            filters: [] as ListItem[],
+            selectedCategory: '0'
+        },
         categories: [] as ListItem[],
-        dataSoruce: [] as ListItem[]
+        services: [] as ServiceItem[],
+        dataSource: [] as ServiceItem[]
     };
 
-
-    handleBackButtonClick(): void {
-        try{
-            this.setState({
-                target: 0,
-                section: 1,
-                isLoading: false,
-                categories: [defaultCategory]
-            }, () =>this.loadContent());
-        }
-        catch(err){
-            console.log(err);
-        }
-    }
-
-    selectCategory (target: number): void{
+    toggleBottomNavigationView = () => {
         this.setState({
-            target,
-            section: 2,
-            isLoading: false,
-            categories: []
-        }, () =>this.loadContent());
-    }
-    selectService(target: number){
-
-    }
-
-    SearchFilterFunction(text: string): void {
-        const newData = this.state.dataSoruce.filter(function(item) {
-          const itemData = item.name ? item.name.toUpperCase() : ''.toUpperCase();
-          const textData = text.toUpperCase();
-          return itemData.indexOf(textData) > -1;
+            isVisible: !this.state.isVisible
         });
-        this.setState({
-            categories: newData,
-            search: text
+    };
+
+    onSelectedItemsChange(selected: ListItem, filterIndex: number)  {
+        const {search} = this.state;
+        const castFilter = functionCast(selected);
+        search.filters[filterIndex] = castFilter;
+        if(filterIndex==0){
+            if(selected.id!='0')
+                this.state.services = this.state.dataSource.filter(e=> e.categoryId==selected.id);
+            else
+                this.state.services = this.state.dataSource;
+            this.state.search.text = '';
+            this.state.search.selectedCategory = selected.id;
+        }
+    };
+
+    selectService(target: string): void {
+        this.props.navigation.dangerouslyGetParent()?.navigate('Service', {
+            id: target
         });
     }
 
-    loadContent(){
-        const request = (this.state.section==1)? 
-        '/service-category/all': (this.state.target==0)? 
-        '/service/all':'/service-category/'+this.state.target;;
-        Axios.get(request, { params: { limit: 5 } })
-        .then(myJson => {
-            const itemsArray = (this.state.target==0)? myJson.data.data: myJson.data.data.services;
-            const newCategories = itemsArray.map((e: ListItem)=>{
-                const formal = e.name.toUpperCase();
-                return  {
-                    name: formal,
-                    id: e.id
-                } as ListItem
-            });
-            const categories = [...newCategories];
-            if(this.state.section==1)
+    searchFilterFunction = (text: string): void => {
+        const searched = text;
+        const newData = this.state.dataSource.filter(function (item) {
+            const itemData = item.name ? item.name.toUpperCase() : ''.toUpperCase();
+            const textData = searched.toUpperCase();
+            return itemData.indexOf(textData) > -1;
+        });
+        this.setState({
+            services: newData,
+            search: {...this.state.search, text}
+        });
+    }
+
+    loadContent() {
+        const requestCategories = '/service-category/all';
+        const requestServices = '/service/all';
+        const requestSpecific = '/service-category/';
+        const fetchData = async () => {
+            try {
+                const resultCategories = await Axios.get(requestCategories);
+                const resultServices = await Axios.get(requestServices);
+                const arrayCategories = resultCategories.data.data;
+                const newCategories : Array<ListItem> = arrayCategories.map((e:ListItem)=>wellWrittenC(e));
+                const categories = [...newCategories];
                 categories.unshift(defaultCategory);
-            this.state.dataSoruce = categories;
-            this.setState({categories,
-                isLoading:false});
-        }).catch(err=>{
-            console.log(err);
-            this.state.dataSoruce = [];
-            this.setState({categories:[],
-                isLoading:false});
-        })
+                
+                const arrayServices = resultServices.data.data;
+                const newServices : Array<ServiceItem> = arrayServices.map((e:ServiceItem)=>wellWrittenS(e));
+                const services = [...newServices];
+            
+                this.state.dataSource = services;
+                this.state.categories = categories;
+                this.state.services = services;
+
+                this.state.search.filters[0] = defaultCategory;
+
+            }
+            catch (err) {
+                this.state.dataSource = [];
+                this.state.services = [];
+            }
+            finally{
+                this.setState({isLoading: false });
+            }
+        }
+        fetchData();
     }
 
-    componentDidMount(){
+    componentDidMount() {
         this.loadContent();
     }
 
-    render(){
-        const target = 'Service';
-        if(this.state.isLoading){
-            return(
-                <View style={{ flex: 1, paddingTop: 20 }}>
-                    <ActivityIndicator />
-                </View>
-            )
+    render() {
+        const { categories, services, isLoading, search, isVisible } = this.state;
+        if (isLoading) {
+            return (<LoadingComponent text={'Loading directory'} />)
         }
+        return (
+            <SafeAreaView style={styles.container} >
 
-       return(
-        <SafeAreaView style={styles.container} >
-            <View style={styles.searchHeader}>
-                <View style={(this.state.section==2)? styles.viewIcon:styles.viewNoIcon} >
-                    <Icon style={styles.icon}
-                    name={'chevron-left'} 
-                    onPress={this.handleBackButtonClick}  
+                <SearchBarComponent
+                    onChangeText={this.searchFilterFunction}
+                    textValue={search.text}
+                    returnButton={false}
                 />
-                </View>
-                <View style={styles.searchBar}>
-                    <SearchBar 
-                    
-                    searchIcon={{ size: 24 }}
-                    onChangeText={text => this.SearchFilterFunction(text)}
-                    placeholder="Busca aqui..."
-                    value={this.state.search}
-                    />
-                </View>
-            </View>
-            <DirectoryScroll 
-                style={styles.directoryScroll}
-                image={(this.state.section==1)? BookMarkImage : CustomerSupport}
-                list={this.state.categories}
-                onPressItem={(this.state.section==1)? this.selectCategory: this.selectService}
-                key={this.state.section}
-            />
-        <StatusBar style="auto" />
-        </SafeAreaView>
-       ) 
+
+                <FilterCard
+                    data={search.filters}
+                    onDeleteFilterTag={this.toggleBottomNavigationView}
+                    onPressFilter={this.toggleBottomNavigationView}
+                    icon={{ size: 16, color: constants.colors.darkCyan, name: 'filter', type: 'antdesign' }}
+                />
+                
+                <BottomSheet
+                style={styles.bs}
+                 isVisible={isVisible}>
+                    <View style={styles.bs_container}>
+                        <View style={styles.bs_header_container}>
+                            <Text style={styles.bs_title}>Filtrar</Text>
+                            <View>
+                                <Icon name={'close'} type={'antdesign'} size={24} color="gray" onPress={this.toggleBottomNavigationView}  />
+                            </View>
+                        </View>
+                        <View style={styles.bs_body}>
+                        <View>
+                            <Select 
+                            title={'Categoria'}
+                            data = {categories}
+                            onPressDropdown = {false}
+                            filterIndex={0}
+                            selectedIndex={search.selectedCategory}
+                            onSelectItem={this.onSelectedItemsChange}
+                            itemsIcon={{ size: 16, color: constants.colors.darkCyan, name: 'filter', type: 'antdesign' }} />
+                        </View>
+                        <BaseButton
+                            type={ButtonTypes.YELLOW}
+                            title={'Aplicar'}
+                            onPressEvent={this.toggleBottomNavigationView}
+                        />
+                        </View>
+                    </View>
+                </BottomSheet>
+
+                <DirectoryScroll
+                    list={services}
+                    onPressItem={this.selectService}
+                    key={Section.Categories}
+                    style={styles.directoryScroll}
+                    header={false}
+                />
+                <StatusBar style="auto" />
+            </SafeAreaView>
+        )
     }
 }
 
+
+
 const styles = StyleSheet.create({
-    searchHeader:{
-        flexDirection: "row",
-        width: '100%',
-        flexWrap: 'wrap',
-    },
-    directoryScroll:{
+    directoryScroll: {
         width: '100%',
         flexWrap: 'wrap',
         flexDirection: 'column',
-    },
-    searchBar:{
-        flex: 1,
-        flexGrow: 8,
-        elevation: 4,
-    },
-    viewIcon:{
-        flex: 1,
-        flexGrow: 1,
-        backgroundColor: '#9e9e9e',
-        elevation: 4,
-        justifyContent: 'center'
-    },
-    viewNoIcon:{
-        display: 'none'
-    },
-    icon:{
-        width: '100%',
-        padding: 16
     },
     container: {
         width: '100%',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
+        flexDirection: 'column'
+    },
+    bs: {
+        height:500,
+        flexDirection: 'column',
+        backgroundColor: 'white',
+        padding: 14,
+        borderTopLeftRadius: 10,
+        borderTopRightRadius: 10,
+        //borderColor: 'red',
+        //borderWidth: 0.2
+    },
+    bs_container: {
+        flex:1,
+        flexDirection: 'column',
+        //borderColor: 'red',
+        //borderWidth: 0.2,
+        justifyContent:'space-between'
+    },
+    bs_header_container: {
+        flexDirection: 'row',
+        justifyContent:'space-between',
+        paddingBottom: 8,
+        borderColor: 'white',
+        borderBottomColor: '#cfd8dc',
+        borderWidth: 1.6,
+        marginBottom:20
+    },
+    bs_body:{
+        flex:1,
+        flexDirection: 'column',
+        justifyContent:'space-between',
+    },
+    bs_title: {
+        fontSize: 28,
+        color: constants.colors.darkCyan,
+        fontWeight: 'bold',
+        //borderColor: 'green',
+        //borderWidth: 0.5
+    },
+    bs_title_icon: {
+        //borderColor: 'green',
+        //borderWidth: 0.2
+    },
+    filters_container: {
+        flex: 1,
+        flexDirection: 'row',
+        borderRadius: 30,
+        color: '#00848c',
+    },
+    badges_text: {
+        padding: 2
+
     }
-})
+});

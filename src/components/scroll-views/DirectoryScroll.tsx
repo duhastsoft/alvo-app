@@ -1,55 +1,72 @@
-import React from 'react';
-import { ImageSourcePropType, ScrollView, StyleProp, ViewStyle, StyleSheet } from 'react-native';
-import LoadingIcon from '@/assets/images/sand-clock-1.png';
+import React, { useEffect, useState } from 'react';
+import { ImageSourcePropType, ScrollView, StyleProp, ViewStyle, StyleSheet, View, SectionList, Text } from 'react-native';
 import ServiceCategory from '../card/DirectoryCard';
-
-interface DirectoryCard {
-  id: number;
-  name: string;
-}
+import constants from '@/constants';
+import {ServiceItem} from '@/constants/Directory'
 
 export interface DirectoryScrollProps {
-  image: ImageSourcePropType;
   style?: StyleProp<ViewStyle>;
   styleItems?: StyleProp<ViewStyle>;
-  onPressItem: (index: number) => void;
-  list: DirectoryCard[];
+  onPressItem: (index: string) => void;
+  list: ServiceItem[];
+  header: boolean;
 }
 
 export default function DirectoryScroll(props: DirectoryScrollProps) {
-  if (props.list.length < 1) {
+  const [didMount, setDidMount] = useState(false); 
+
+  useEffect(() => {
+    setDidMount(true);
+  }, []);
+
+  if (props.list.length < 1 || !didMount) {
     return (
-      <ScrollView style={[styles.row, props.style]}>
+      <View style={styles.container}>
         <ServiceCategory
-          index={0}
+          id={'0'}
           key={0}
-          image={LoadingIcon}
           name={'CARGANDO...'}
           style={props.styleItems}
+          icon={{name:'timer-sand', type:'material-community',color:'gray'}}
         />
-      </ScrollView>
+      </View>
     );
   }
-  return (
-    <ScrollView style={[styles.row, props.style]}>
-      {props.list.map((option) => (
+  return <View style={styles.container}>
+    {props.list.map(element => 
         <ServiceCategory
-          index={option.id}
-          key={option.id}
-          image={props.image}
-          name={option.name}
+          key={element.id}
+          icon={{name:'toolbox', type:'material-community',color:'gray'}}
+          id={element.id}
+          name={element.name}
           onPress={props.onPressItem}
-          style={props.styleItems}
         />
-      ))}
-    </ScrollView>
-  );
+      )
+    }
+  </View>
 }
 
 const styles = StyleSheet.create({
-  row: {
+  container: {
     width: '100%',
-    flexDirection: 'row',
-    marginBottom: 16,
+    display: 'flex',
+    backgroundColor:'white'
+  },
+  sectionHeader: {
+    paddingVertical: 2,
+    paddingHorizontal: 14,
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: 'white',
+    backgroundColor: constants.colors.darkCyan,
+  },
+  itemS: {
+    padding: 10,
+    paddingHorizontal: 14,
+    fontSize: 18,
+    height: 44,
+    borderBottomWidth: 0.2,
+    borderBottomColor: '#cfd8dc',
   },
 });
+

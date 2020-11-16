@@ -5,7 +5,16 @@ export type RootStackParamList = {
     type: 'category' | 'free' | 'vmt';
     limit?: number;
   };
+  Service: {
+    id?: string;
+  };
 };
+
+export type DirectoryStackParamList = {
+  Directory:undefined;
+  DirectorybyCategory:undefined;
+  ServiceProfile:undefined;
+}
 
 export type BottomTabParamList = {
   Home: undefined;
