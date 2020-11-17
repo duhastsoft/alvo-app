@@ -5,6 +5,13 @@ import Axios from 'axios';
 import React, { Component } from 'react';
 import { Image, Platform, StatusBar, StyleSheet, Text, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
+import * as SecureStore from 'expo-secure-store';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { RootStackParamList } from '@/types';
+
+interface LoginProps {
+  navigation: StackNavigationProp<RootStackParamList, 'Login'>;
+}
 
 interface LoginState {
   username: string;
@@ -17,13 +24,19 @@ interface LoginState {
   };
 }
 
-export default class LoginScreen extends Component<{}, LoginState> {
+export default class LoginScreen extends Component<LoginProps, LoginState> {
   state: LoginState = {
     username: '',
     password: '',
     loading: false,
     errors: { username: '', password: '' },
   };
+
+  async componentDidMount() {
+    if (await SecureStore.getItemAsync('token')) {
+      this.props.navigation.replace('Root');
+    }
+  }
 
   usernameChangeHandler = (value: string) => {
     this.setState({ username: value });
@@ -52,7 +65,7 @@ export default class LoginScreen extends Component<{}, LoginState> {
       errors.password = 'Al menos 8 caracteres';
       valid = false;
     }
-    this.setState({ errors });
+    if (!valid) this.setState({ errors });
     return valid;
   };
 
@@ -63,11 +76,13 @@ export default class LoginScreen extends Component<{}, LoginState> {
 
     try {
       if (isFormValid) {
-        const token = await Axios.post('/login', {
+        const response = await Axios.post('/login', {
           account: this.state.username,
           password: this.state.password,
         });
-        console.log(token);
+        const token: string = response.data.token;
+        await SecureStore.setItemAsync('token', token);
+        this.props.navigation.replace('Root');
       }
     } catch (err) {
       const responseErrors: { param: string; message: string }[] = err.response.data.errors;
