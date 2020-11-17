@@ -1,6 +1,6 @@
 import React from 'react';
-import { StyleSheet, SafeAreaView, Button, View, Alert, Text, TouchableOpacity } from 'react-native';
-import { StatusBar } from 'expo-status-bar';
+import { StyleSheet, SafeAreaView, Button, View, Alert, Text, TouchableOpacity, StatusBar } from 'react-native';
+//import { StatusBar } from 'expo-status-bar';
 import Axios from 'axios';
 import DirectoryScroll from '@/components/scroll-views/DirectoryScroll';
 import { StackNavigationProp } from '@react-navigation/stack';
@@ -127,7 +127,7 @@ export default class DirectoryScreen extends React.Component<DirectoryProps>{
         }
         return (
             <SafeAreaView style={styles.container} >
-
+                <StatusBar barStyle="dark-content"/>
                 <SearchBarComponent
                     onChangeText={this.searchFilterFunction}
                     textValue={search.text}
@@ -178,7 +178,7 @@ export default class DirectoryScreen extends React.Component<DirectoryProps>{
                     style={styles.directoryScroll}
                     header={false}
                 />
-                <StatusBar style="auto" />
+               
             </SafeAreaView>
         )
     }
