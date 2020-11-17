@@ -46,20 +46,6 @@ function makeCall(phone:string){
 
 
 export default function Profile(props: ProfileProps) {
-    const triggerCall = () => {
-        // Check for perfect 10 digit length
-        if (props.phone.length != 10) {
-          alert('Please insert correct contact number');
-          return;
-        }
-    
-        const args = {
-          number: props.phone,
-          prompt: true,
-        };
-        // Make a call
-        call(args).catch(console.error);
-      };
     return (
         <View style={styles.container}>
             <View style={styles.header}>
@@ -74,7 +60,7 @@ export default function Profile(props: ProfileProps) {
             </View>
             <View style={styles.quickactionsbutton}>
                 <View style={styles.quickactions} >
-                    <TouchableOpacity onPress={makeCall(props.phone)} style={styles.button}>
+                    <TouchableOpacity onPress={()=>makeCall(props.phone)} style={styles.button}>
                         <Icon
                             name='call'
                             type='material'
@@ -129,7 +115,7 @@ export default function Profile(props: ProfileProps) {
                 </View>
                 <View style={styles.details}>
                     <Text style={styles.detailTitle}>Teléfono</Text>
-                    <Text style={styles.detailDescription} onPress={makeCall(props.phone)} >{props.phone}</Text>
+                    <Text style={styles.detailDescription} onPress={()=>makeCall(props.phone)} >{props.phone}</Text>
                 </View>
             </View>
         </View>
