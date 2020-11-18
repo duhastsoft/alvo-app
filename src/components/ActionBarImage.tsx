@@ -1,11 +1,11 @@
 import React from 'react';
 
-import {View, Image} from 'react-native';
+import { View, Image } from 'react-native';
 import Alvo from '@/assets/splash.png';
 
 const ActionBarImage = () => {
   return (
-    <View style={{flexDirection: 'row'}}>
+    <View style={{ flexDirection: 'row' }}>
       <Image
         source={Alvo}
         style={{
