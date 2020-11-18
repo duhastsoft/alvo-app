@@ -1,6 +1,7 @@
 type validationFunction = (v: string) => true | string;
 
 const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+const alphanumRegex = /^[a-zA-Z0-9]+$/;
 
 export const rules = {
   notEmpty: (v: string) => !!v.trim() || 'Campo requerido',
@@ -9,6 +10,7 @@ export const rules = {
   email: (v: string) => emailRegex.test(v) || 'Correo no válido',
   passwordMatch: (password: string) => (v: string) =>
     password === v || 'Las contraseñas no coinciden',
+  alphanumeric: (v: string) => alphanumRegex.test(v) || 'Solo caracteres y números',
 };
 
 export const validateField = (...fns: validationFunction[]) => (value: string): string => {

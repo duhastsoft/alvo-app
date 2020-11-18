@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleProp, StyleSheet, Text, View, ViewStyle } from 'react-native';
+import { KeyboardTypeOptions, StyleProp, StyleSheet, Text, View, ViewStyle } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 
 interface InputProps {
@@ -10,6 +10,8 @@ interface InputProps {
   onChangeText?: (text: string) => void;
   value?: string;
   error?: string;
+  keyboardType?: KeyboardTypeOptions;
+  autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters';
 }
 
 export default function Input(props: InputProps) {
@@ -20,6 +22,8 @@ export default function Input(props: InputProps) {
           style={[styles.input, props.styleInput, props.error ? styles.inputError : null]}
           placeholder={props.placeholder}
           secureTextEntry={props.password}
+          keyboardType={props.keyboardType}
+          autoCapitalize={props.autoCapitalize}
           onChangeText={props.onChangeText}
           value={props.value}
         />
@@ -54,6 +58,7 @@ const styles = StyleSheet.create({
   textError: {
     color: 'red',
     marginTop: 8,
+    paddingLeft: 8,
     fontSize: 12,
   },
 });

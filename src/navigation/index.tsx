@@ -2,6 +2,7 @@ import ActionBarImage from '@/components/ActionBarImage';
 import constants from '@/constants';
 import LoginScreen from '@/screens/LoginScreen';
 import QuizScreen from '@/screens/QuizScreen';
+import RegisterScreen from '@/screens/RegisterScreen';
 import ResultsScreen from '@/screens/ResultsScreen';
 import ServiceScreen from '@/screens/ServiceScreen';
 import { RootStackParamList } from '@/types';
@@ -25,6 +26,7 @@ export default function Navigation() {
         }}
       >
         <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="Register" component={RegisterScreen} options={{ title: 'Registro' }} />
         <Stack.Screen
           name="Root"
           component={BottomTabsNavigator}

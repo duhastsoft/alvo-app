@@ -8,6 +8,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 import * as SecureStore from 'expo-secure-store';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '@/types';
+import { Link } from '@react-navigation/native';
 
 interface LoginProps {
   navigation: StackNavigationProp<RootStackParamList, 'Login'>;
@@ -127,7 +128,15 @@ export default class LoginScreen extends Component<LoginProps, LoginState> {
           loading={this.state.loading}
         />
         {errors.general ? <Text style={styles.textError}>{errors.general}</Text> : null}
-        <Text style={styles.textNormal}>¿No tienes una cuenta? Regístrate</Text>
+        <Text style={styles.textNormal}>
+          ¿No tienes una cuenta?{' '}
+          <Link to="/Register" style={styles.textLink}>
+            Regístrate
+          </Link>
+        </Text>
+        <Link to="/Root" style={styles.textLink}>
+          Continuar como invitado
+        </Link>
       </ScrollView>
     );
   }
@@ -164,5 +173,9 @@ const styles = StyleSheet.create({
   textNormal: {
     color: '#a5a5a5',
     marginTop: 12,
+  },
+
+  textLink: {
+    color: '#2C45E1',
   },
 });
