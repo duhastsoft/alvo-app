@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
-import { Text, View, StyleSheet, Dimensions } from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
+import { Text, View, StyleSheet, Dimensions, Animated, ScrollView, Platform } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '@/types';
 import LatLon from '../helpers/LatLng.min.js';
-import { FlatList } from 'react-native';
+const { width, height } = Dimensions.get('window');
+const CARD_HEIGHT = 200;
+const CARD_WIDTH = width * 0.8;
+const SPACING_FOR_CARD_INSET = width * 0.1 - 10;
 
 interface MapState {
   userLocation: {
@@ -106,24 +108,52 @@ export default class MapScreen extends Component<MapProps, MapState> {
           }}
         >
           {this.state ? (
-            <Marker coordinate={this.state.userLocation} title={'Tu ubicación'} pinColor={'cyan'} />
+            <Marker
+              coordinate={this.state.userLocation}
+              title={'Tu ubicación'}
+              image={require('../assets/images/marker-user.png')}
+              centerOffset={{ x: 0, y: 50 }}
+            />
           ) : null}
           {this.state.schools!.map((school, index) => {
             const coords = { latitude: school.latitud, longitude: school.longitude };
             return (
-              <Marker key={index} coordinate={coords} title={school.name} pinColor={'green'} />
+              <Marker
+                key={index}
+                coordinate={coords}
+                title={school.name}
+                image={require('../assets/images/marker-school.png')}
+              />
             );
           })}
         </MapView>
-        <FlatList
-          data={this.sortByDistance()}
-          keyExtractor={(school) => school.id}
-          renderItem={({ item }) => (
-            <View style={styles.testview}>
-              <Text>{`${item.name} - ${item.latitud}`}</Text>
-            </View>
-          )}
-        ></FlatList>
+
+        <Animated.ScrollView
+          horizontal
+          scrollEventThrottle={1}
+          showsHorizontalScrollIndicator={false}
+          style={styles.scrollView}
+          pagingEnabled
+          snapToInterval={CARD_WIDTH + 20}
+          snapToAlignment="center"
+          contentInset={{
+            top: 0,
+            left: SPACING_FOR_CARD_INSET,
+            bottom: 0,
+            right: SPACING_FOR_CARD_INSET,
+          }}
+          contentContainerStyle={{
+            paddingHorizontal: Platform.OS === 'android' ? SPACING_FOR_CARD_INSET : 0,
+          }}
+        >
+          {this.sortByDistance()!.map((school, index) => {
+            return (
+              <View style={styles.card} key={index}>
+                <Text>{school.name}</Text>
+              </View>
+            );
+          })}
+        </Animated.ScrollView>
       </View>
     );
   }
@@ -138,7 +168,7 @@ const styles = StyleSheet.create({
   },
   mapStyle: {
     width: Dimensions.get('window').width,
-    height: Dimensions.get('window').height / 2 - 50,
+    height: Dimensions.get('window').height,
   },
   testview: {
     width: Dimensions.get('window').width,
@@ -147,5 +177,27 @@ const styles = StyleSheet.create({
     elevation: 2,
     padding: 8,
     marginTop: 8,
+  },
+  scrollView: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    paddingVertical: 10,
+  },
+  card: {
+    // padding: 10,
+    elevation: 2,
+    backgroundColor: '#FFF',
+    borderTopLeftRadius: 5,
+    borderTopRightRadius: 5,
+    marginHorizontal: 10,
+    shadowColor: '#000',
+    shadowRadius: 5,
+    shadowOpacity: 0.3,
+    shadowOffset: { width: 2, height: -2 },
+    height: CARD_HEIGHT,
+    width: CARD_WIDTH,
+    overflow: 'hidden',
   },
 });
