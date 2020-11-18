@@ -1,10 +1,12 @@
 import ActionBarImage from '@/components/ActionBarImage';
 import constants from '@/constants';
+import LoginScreen from '@/screens/LoginScreen';
 import QuizScreen from '@/screens/QuizScreen';
+import RegisterScreen from '@/screens/RegisterScreen';
 import ResultsScreen from '@/screens/ResultsScreen';
 import ServiceScreen from '@/screens/ServiceScreen';
 import { RootStackParamList } from '@/types';
-import { NavigationContainer, getFocusedRouteNameFromRoute, } from '@react-navigation/native';
+import { NavigationContainer, getFocusedRouteNameFromRoute } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
 import { Icon } from 'react-native-elements';
@@ -23,20 +25,33 @@ export default function Navigation() {
           },
         }}
       >
-        <Stack.Screen name="Root" component={BottomTabsNavigator} options={({ route }) => ({
-          headerTitle: getHeaderTitle(route), headerRight: () =>  <Icon
-          name='info'
-          type='simple-line-icon'
-          size={22}
-          color={'gray'}
-          containerStyle={{ marginBottom: 4,marginRight:14 }}
-          /> ,
-          headerLeft: () => <ActionBarImage/>,
-          headerTitleAlign:'center'
-        })} />
-        <Stack.Screen name="Quiz" component={QuizScreen} options={{ title: 'Examen de manejo' }}  />
-        <Stack.Screen name="Service" component={ServiceScreen} options={{title: 'Servicio'}}/>
-        <Stack.Screen name="Results" component={ResultsScreen} options={{title: 'Resultados', headerShown:false}} />
+        <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="Register" component={RegisterScreen} options={{ title: 'Registro' }} />
+        <Stack.Screen
+          name="Root"
+          component={BottomTabsNavigator}
+          options={({ route }) => ({
+            headerTitle: getHeaderTitle(route),
+            headerRight: () => (
+              <Icon
+                name="info"
+                type="simple-line-icon"
+                size={22}
+                color={'gray'}
+                containerStyle={{ marginBottom: 4, marginRight: 14 }}
+              />
+            ),
+            headerLeft: () => <ActionBarImage />,
+            headerTitleAlign: 'center',
+          })}
+        />
+        <Stack.Screen name="Quiz" component={QuizScreen} options={{ title: 'Examen de manejo' }} />
+        <Stack.Screen name="Service" component={ServiceScreen} options={{ title: 'Servicio' }} />
+        <Stack.Screen
+          name="Results"
+          component={ResultsScreen}
+          options={{ title: 'Resultados', headerShown: false }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
