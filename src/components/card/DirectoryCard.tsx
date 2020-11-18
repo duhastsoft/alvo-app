@@ -1,41 +1,40 @@
 import React from "react";
 import { TouchableOpacity, Image, Text, View, StyleSheet, ViewStyle, StyleProp, ImageSourcePropType } from "react-native";
 import { StackNavigationProp } from '@react-navigation/stack';
-
+import { Icon,IconProps } from "react-native-elements";
 
 export interface CardCategoryProps {
-    index: number,
-    image: ImageSourcePropType;
-    name: string;
+    id: string,
+    name: string,
     style?: StyleProp<ViewStyle>,
-    onPress?: (index: number) => void;
+    onPress?: (index: string) => void;
+    icon: IconProps;
 }   
 
 export default class ServiceCategory extends React.Component<CardCategoryProps>{
     constructor(props: CardCategoryProps){
         super(props);
     }
-    buttonPress (indexS: number){
+    buttonPress (indexS: string){
         this.props.onPress!(indexS);
     }
     
     render(){
+        const {id, name, icon} = this.props;
         return(
             <TouchableOpacity
             style={[styles.card, this.props.style]}
             onPress={()=>{
                 if(this.props.onPress)
-                    this.buttonPress(this.props.index)
+                    this.buttonPress(id)
             }}
             activeOpacity={0.8}
             >
                 <View style={styles.cardContent}>
-                    <Image
-                    style={styles.cardImage} 
-                    resizeMode="cover"
-                    source={this.props.image}
-                    />
-                    <Text style={styles.cardTitle}>{this.props.name}</Text>
+
+                    <Icon 
+                    name={icon.name} type={icon.type} size={icon.size} color={icon.color} />
+                    <Text style={styles.cardTitle}>{name}</Text>
                 </View>
             </TouchableOpacity>
         )
@@ -44,27 +43,22 @@ export default class ServiceCategory extends React.Component<CardCategoryProps>{
 
 const styles = StyleSheet.create({
     card: {
-      padding: 16,
+      padding: 14,
       backgroundColor: '#ffffff',
       width: '100%',
-      elevation: 8,
     },
-  
     cardTitle: {
       color: '#00848c',
       textAlign: 'left',
-      flexBasis: '80%'
-    },
-    cardImage: {
-        padding: 8,
-        marginEnd: 16,
-        maxWidth:24,
-        maxHeight: 24
+      flexBasis: '80%',
+      fontSize:16,
+      paddingLeft:4,
+        
     },
     cardContent:{
         display: "flex", 
         flexDirection: "row",
-        padding: 8,
+        alignItems:'center'
     }
   });
   

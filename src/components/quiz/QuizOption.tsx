@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
   },
 
   correct: {
-    backgroundColor: '#3FEF66',
+    backgroundColor: '#4BD191',
   },
 
   incorrect: {

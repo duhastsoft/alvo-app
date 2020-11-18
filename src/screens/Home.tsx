@@ -2,13 +2,14 @@ import BookImage from '@/assets/images/book-1.png';
 import ConeImage from '@/assets/images/cone-1.png';
 import StopImage from '@/assets/images/stop-sign-1.png';
 import TireImage from '@/assets/images/tire-1.png';
+import Alvo from '@/assets/splash.png';
 import Button, { ButtonTypes } from '@/components/buttons/Button';
 import Card from '@/components/card/Card';
 import { BottomTabParamList } from '@/types';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { StatusBar } from 'expo-status-bar';
+//import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View ,Image,StatusBar,Text} from 'react-native';
 
 const DEFAULT_QUIZ_SIZE = 20;
 
@@ -54,7 +55,6 @@ export default function Home({ navigation }: HomeProps) {
           />
         ))}
       </View>
-
       <Button
         title="Prueba libre"
         onPressEvent={() =>
@@ -66,8 +66,11 @@ export default function Home({ navigation }: HomeProps) {
         style={{ width: '100%' }}
         type={ButtonTypes.YELLOW}
       />
-
-      <StatusBar style="auto" />
+    <View style={{alignItems:'center'}}>
+    <Text style={{fontSize:14, color:'gray',marginBottom:2}}>Desarrollada por Duhast Soft</Text>
+    <Text style={{fontSize:14, color:'gray'}}>v.1.0.0</Text>
+    </View>
+    <StatusBar barStyle="dark-content"/>
     </View>
   );
 }
@@ -76,8 +79,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
+    paddingBottom:10,
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent:'space-evenly',
   },
 
   row: {
