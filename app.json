@@ -15,7 +15,14 @@
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.duhastsoft.alvo"
+    },
+    "android": {
+      "package": "com.duhastsoft.alvo",
+      "config": {
+        "googleMaps": { "apiKey": "AIzaSyAmiybd7sj9vc9Cg0DQYPw0ADXeUAEZzXI" }
+      }
     },
     "web": {
       "favicon": "./src/assets/favicon.png"

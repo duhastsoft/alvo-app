@@ -7,15 +7,19 @@ import {
   Animated,
   ScrollView,
   Platform,
-  StyleProp,
-  ViewStyle,
+  Image,
 } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
+import LoadingComponent from '@/components/LoadingComponent';
+import Button, { ButtonTypes } from '@/components/buttons/Button';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '@/types';
 import LatLon from '../helpers/LatLng.min.js';
+
+import constants from '@/constants';
+import Axios from 'axios';
 const { width, height } = Dimensions.get('window');
-const CARD_HEIGHT = 130;
+const CARD_HEIGHT = 150;
 const CARD_WIDTH = width * 0.8;
 const SPACING_FOR_CARD_INSET = width * 0.1 - 10;
 
@@ -26,6 +30,7 @@ interface MapState {
     message?: string;
   };
   schools?: any[];
+  isLoading?: boolean;
 }
 
 interface MapProps {
@@ -49,38 +54,33 @@ export default class MapScreen extends Component<MapProps, MapState> {
         latitude: defaultLocation.latitude,
         longitude: defaultLocation.longitude,
       },
-      schools: [
-        {
-          id: 2,
-          name: 'Escuela Zacamil',
-          description: 'El lugar de las gangas',
-          latitud: 13.7348912,
-          longitude: -89.2052879,
-        },
-        {
-          id: 6,
-          name: 'Escuela Metrocentro',
-          description: 'El lugar de las gangas',
-          latitud: 13.7096126,
-          longitude: -89.2083248,
-        },
-        {
-          id: 8,
-          name: 'Escuela Bernal',
-          description: 'Centro de formación para obtener carne de conducir',
-          latitud: 13.7270032,
-          longitude: -89.2146347,
-        },
-      ],
+      isLoading: true,
+      schools: [],
     };
   }
 
   private mapRef = React.createRef<MapView>();
   private scrollRef = React.createRef<ScrollView>();
+  private regionTimeout: number = 0;
 
-  // private interpolations:{ scale: any }[] = [];
+  loadSchools() {
+    const fetchData = async () => {
+      try {
+        const request = '/service-category/3';
+        const result = await Axios.get(request);
+        const schools = result.data.data.services;
+        this.setState({ schools });
 
-  componentDidMount() {
+        this.getUserPosition();
+      } catch (err) {
+        console.log(err);
+        this.setState({ isLoading: false });
+      }
+    };
+    fetchData();
+  }
+
+  getUserPosition() {
     navigator.geolocation.getCurrentPosition(
       (position) => {
         this.setState({
@@ -88,25 +88,19 @@ export default class MapScreen extends Component<MapProps, MapState> {
             latitude: position.coords.latitude,
             longitude: position.coords.longitude,
           },
+          isLoading: false,
         });
       },
       (error) => {
         console.log('AN ERROR HAPPENED');
         console.log(error.message);
+        this.setState({ isLoading: false });
       }
     );
+  }
 
-    // this.interpolations = this.state.schools?.map((school, i) => {
-    //   const inputRange = [(i - 1) * CARD_WIDTH, i * CARD_WIDTH, (i + 1) * CARD_WIDTH];
-
-    //   const scale = mapAnimation.interpolate({
-    //     inputRange,
-    //     outputRange: [1, 2, 1],
-    //     extrapolate: 'clamp',
-    //   });
-
-    //   return { scale };
-    // });
+  componentDidMount() {
+    this.loadSchools();
   }
 
   componentDidUpdate() {
@@ -119,13 +113,14 @@ export default class MapScreen extends Component<MapProps, MapState> {
         index = 0;
       }
 
-      // clearTimeout(regionTimeout);
+      // if (this.regionTimeout) clearTimeout(this.regionTimeout);
 
-      const regionTimeout = setTimeout(() => {
+      this.regionTimeout = setTimeout(() => {
         if (mapIndex !== index) {
           mapIndex = index;
           const { latitud, longitude } = this.state.schools![index];
-          this.mapRef.current!.animateToRegion(
+          console.log(this.mapRef.current);
+          this.mapRef.current?.animateToRegion(
             {
               latitude: latitud,
               longitude: longitude,
@@ -135,16 +130,19 @@ export default class MapScreen extends Component<MapProps, MapState> {
             350
           );
         }
-      }, 10);
+      }, 1);
+
+      // clearTimeout(regionTimeout);
     });
   }
 
   sortByDistance() {
+    if (this.state.schools!.length <= 0) return [];
     const { latitude, longitude } = this.state.userLocation;
     const pos = new LatLon(latitude, longitude);
     return this.state.schools?.sort((a, b) => {
-      let distA = pos.distanceTo(new LatLon(a.latitud, a.longitude));
-      let distB = pos.distanceTo(new LatLon(b.latitud, b.longitude));
+      let distA = pos.distanceTo(new LatLon(parseFloat(a.latitud), parseFloat(a.longitude)));
+      let distB = pos.distanceTo(new LatLon(parseFloat(b.latitud), parseFloat(b.longitude)));
 
       return distA - distB;
     });
@@ -161,91 +159,111 @@ export default class MapScreen extends Component<MapProps, MapState> {
     this.scrollRef.current!.scrollTo({ x: x, y: 0, animated: true });
   }
 
-  render() {
-    return (
-      <View style={styles.container}>
-        <MapView
-          ref={this.mapRef}
-          style={styles.mapStyle}
-          initialRegion={{
-            latitude: defaultLocation.latitude,
-            longitude: defaultLocation.longitude,
-            latitudeDelta: 0.0422,
-            longitudeDelta: 0.0421,
-          }}
-          region={{
-            ...this.state.userLocation,
-            latitudeDelta: 0.0422,
-            longitudeDelta: 0.0421,
-          }}
-        >
-          {this.state ? (
-            <Marker
-              coordinate={this.state.userLocation}
-              title={'Tu ubicación'}
-              image={require('../assets/images/marker-user.png')}
-            />
-          ) : null}
-          {this.sortByDistance()?.map((school, index) => {
-            const coords = { latitude: school.latitud, longitude: school.longitude };
-            // const scaleStyle = {
-            //   transform: [{ scale: this.interpolations![index].scale }],
-            // };
-            return (
-              <Marker
-                key={index}
-                // style={scaleStyle as any}
-                coordinate={coords}
-                title={school.name}
-                image={require('../assets/images/marker-school.png')}
-                onPress={(e) => this.onMarkerPress(e)}
-              />
-            );
-          })}
-        </MapView>
+  selectService(target: number): void {
+    this.props.navigation.dangerouslyGetParent()?.navigate('Service', {
+      id: target,
+    });
+  }
 
-        <Animated.ScrollView
-          ref={this.scrollRef}
-          horizontal
-          scrollEventThrottle={1}
-          showsHorizontalScrollIndicator={false}
-          style={styles.scrollView}
-          pagingEnabled
-          snapToInterval={CARD_WIDTH + 20}
-          snapToAlignment="center"
-          contentInset={{
-            top: 0,
-            left: SPACING_FOR_CARD_INSET,
-            bottom: 0,
-            right: SPACING_FOR_CARD_INSET,
-          }}
-          contentContainerStyle={{
-            paddingHorizontal: Platform.OS === 'android' ? SPACING_FOR_CARD_INSET : 0,
-          }}
-          onScroll={Animated.event(
-            [
-              {
-                nativeEvent: {
-                  contentOffset: {
-                    x: mapAnimation,
+  render() {
+    if (this.state.isLoading) {
+      return <LoadingComponent text={'Preparando mapa'} />;
+    } else
+      return (
+        <View style={styles.container}>
+          <MapView
+            ref={this.mapRef}
+            style={styles.mapStyle}
+            initialRegion={{
+              latitude: defaultLocation.latitude,
+              longitude: defaultLocation.longitude,
+              latitudeDelta: 0.0422,
+              longitudeDelta: 0.0421,
+            }}
+            region={{
+              ...this.state.userLocation,
+              latitudeDelta: 0.0422,
+              longitudeDelta: 0.0421,
+            }}
+          >
+            {this.state ? (
+              <Marker
+                coordinate={this.state.userLocation}
+                title={'Tu ubicación'}
+                image={require('../assets/images/marker-user.png')}
+              />
+            ) : null}
+            {this.sortByDistance()?.map((school, index) => {
+              const coords = {
+                latitude: parseFloat(school.latitud),
+                longitude: parseFloat(school.longitude),
+              };
+              console.log(coords);
+              return (
+                <Marker
+                  key={index}
+                  coordinate={coords}
+                  title={school.name}
+                  image={require('../assets/images/marker-school.png')}
+                  onPress={(e) => this.onMarkerPress(e)}
+                />
+              );
+            })}
+          </MapView>
+
+          <Animated.ScrollView
+            ref={this.scrollRef}
+            horizontal
+            scrollEventThrottle={1}
+            showsHorizontalScrollIndicator={false}
+            style={styles.scrollView}
+            pagingEnabled
+            snapToInterval={CARD_WIDTH + 20}
+            snapToAlignment="center"
+            contentInset={{
+              top: 0,
+              left: SPACING_FOR_CARD_INSET,
+              bottom: 0,
+              right: SPACING_FOR_CARD_INSET,
+            }}
+            contentContainerStyle={{
+              paddingHorizontal: Platform.OS === 'android' ? SPACING_FOR_CARD_INSET : 0,
+            }}
+            onScroll={Animated.event(
+              [
+                {
+                  nativeEvent: {
+                    contentOffset: {
+                      x: mapAnimation,
+                    },
                   },
                 },
-              },
-            ],
-            { useNativeDriver: true }
-          )}
-        >
-          {this.sortByDistance()!.map((school, index) => {
-            return (
-              <View style={styles.card} key={index}>
-                <Text style={styles.title}>{school.name}</Text>
-                <Text>{school.description}</Text>
-              </View>
-            );
-          })}
-        </Animated.ScrollView>
-      </View>
-    );
+              ],
+              { useNativeDriver: true }
+            )}
+          >
+            {this.sortByDistance()!.map((school, index) => {
+              return (
+                <View style={styles.card} key={index}>
+                  <View>
+                    <Image source={{ uri: school.image }} style={styles.image} />
+                  </View>
+                  <View style={styles.headerText}>
+                    <Text style={styles.title}>{school.name}</Text>
+                    <Text numberOfLines={2}>{school.description}</Text>
+                    <Button
+                      title="Ver más"
+                      style={styles.button}
+                      onPressEvent={() => this.selectService(school.id)}
+                      type={ButtonTypes.PRIMARY}
+                    />
+                  </View>
+                </View>
+              );
+            })}
+          </Animated.ScrollView>
+        </View>
+      );
   }
 }
 
@@ -260,14 +278,6 @@ const styles = StyleSheet.create({
     width: Dimensions.get('window').width,
     height: Dimensions.get('window').height - 120,
   },
-  testview: {
-    width: Dimensions.get('window').width,
-    height: 60,
-    backgroundColor: '#fff',
-    elevation: 2,
-    padding: 8,
-    marginTop: 8,
-  },
   scrollView: {
     position: 'absolute',
     bottom: 0,
@@ -276,11 +286,9 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   card: {
-    // padding: 10,
     elevation: 2,
     backgroundColor: '#FFF',
-    borderTopLeftRadius: 5,
-    borderTopRightRadius: 5,
+    borderRadius: 5,
     marginHorizontal: 10,
     shadowColor: '#000',
     shadowRadius: 5,
@@ -289,11 +297,36 @@ const styles = StyleSheet.create({
     height: CARD_HEIGHT,
     width: CARD_WIDTH,
     overflow: 'hidden',
-    padding: 15,
+    paddingTop: 12,
+    paddingLeft: 12,
+    flexDirection: 'row',
   },
 
   title: {
     fontSize: 18,
     fontWeight: 'bold',
+    marginBottom: 8,
+    color: constants.colors.darkCyan,
+  },
+
+  image: {
+    height: 50,
+    width: 50,
+    borderRadius: 100,
+    backgroundColor: '#fafafa',
+  },
+
+  headerText: {
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    flex: 1,
+    flexDirection: 'column',
+  },
+
+  button: {
+    position: 'absolute',
+    alignSelf: 'flex-end',
+    bottom: 0,
+    right: 8,
   },
 });
