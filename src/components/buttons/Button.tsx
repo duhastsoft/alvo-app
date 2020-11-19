@@ -1,6 +1,13 @@
 import constants from '@/constants';
 import React from 'react';
-import { StyleProp, StyleSheet, Text, TouchableOpacity, ViewStyle } from 'react-native';
+import {
+  ActivityIndicator,
+  StyleProp,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  ViewStyle,
+} from 'react-native';
 
 export enum ButtonTypes {
   PRIMARY,
@@ -8,24 +15,28 @@ export enum ButtonTypes {
 }
 
 export interface ButtonProps {
-  onPressEvent: () => void;
   title: string;
+  onPressEvent?: () => void;
   style?: StyleProp<ViewStyle>;
   textStyle?: StyleProp<ViewStyle>;
   type?: ButtonTypes;
+  loading?: boolean;
 }
 
 export default function Button(props: ButtonProps) {
   let buttonType = styles.buttonDefault;
   let buttonTextType = styles.buttonTextDefault;
+  let indicatorColor = '#333';
   switch (props.type) {
     case ButtonTypes.PRIMARY:
       buttonType = styles.buttonPrimary;
       buttonTextType = styles.buttonTextPrimary;
+      indicatorColor = '#fff';
       break;
     case ButtonTypes.YELLOW:
       buttonType = styles.buttonYellow;
       buttonTextType = styles.buttonTextYellow;
+      indicatorColor = '#fff';
       break;
   }
 
@@ -35,7 +46,11 @@ export default function Button(props: ButtonProps) {
       style={[styles.button, buttonType, props.style]}
       activeOpacity={0.9}
     >
-      <Text style={[styles.buttonText, buttonTextType, props.textStyle]}>{props.title}</Text>
+      {props.loading ? (
+        <ActivityIndicator size="large" color="white" />
+      ) : (
+        <Text style={[styles.buttonText, buttonTextType, props.textStyle]}>{props.title}</Text>
+      )}
     </TouchableOpacity>
   );
 }

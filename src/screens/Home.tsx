@@ -6,9 +6,9 @@ import Button, { ButtonTypes } from '@/components/buttons/Button';
 import Card from '@/components/card/Card';
 import { BottomTabParamList } from '@/types';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { StatusBar } from 'expo-status-bar';
+//import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StatusBar, StyleSheet, Text, View } from 'react-native';
 
 const DEFAULT_QUIZ_SIZE = 20;
 
@@ -38,36 +38,42 @@ interface HomeProps {
 export default function Home({ navigation }: HomeProps) {
   return (
     <View style={styles.container}>
-      <View style={styles.row}>
-        {options.map((option) => (
-          <Card
-            key={option.title}
-            image={option.image}
-            title={option.title}
-            style={styles.item}
-            onPress={() =>
-              navigation.dangerouslyGetParent()?.navigate('Quiz', {
-                type: option.type,
-                category: option.id,
-              })
-            }
-          />
-        ))}
+      <View style={styles.content}>
+        <View style={styles.row}>
+          {options.map((option) => (
+            <Card
+              key={option.title}
+              image={option.image}
+              title={option.title}
+              style={styles.item}
+              onPress={() =>
+                navigation.dangerouslyGetParent()?.navigate('Quiz', {
+                  type: option.type,
+                  category: option.id,
+                })
+              }
+            />
+          ))}
+        </View>
+        <Button
+          title="Prueba libre"
+          onPressEvent={() =>
+            navigation.dangerouslyGetParent()?.navigate('Quiz', {
+              type: 'free',
+              limit: DEFAULT_QUIZ_SIZE,
+            })
+          }
+          style={{ width: '100%' }}
+          type={ButtonTypes.YELLOW}
+        />
       </View>
-
-      <Button
-        title="Prueba libre"
-        onPressEvent={() =>
-          navigation.dangerouslyGetParent()?.navigate('Quiz', {
-            type: 'free',
-            limit: DEFAULT_QUIZ_SIZE,
-          })
-        }
-        style={{ width: '100%' }}
-        type={ButtonTypes.YELLOW}
-      />
-
-      <StatusBar style="auto" />
+      <View style={{ alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: 'gray', marginBottom: 2 }}>
+          Desarrollada por Duhast Soft
+        </Text>
+        <Text style={{ fontSize: 14, color: 'gray' }}>v.1.0.0</Text>
+      </View>
+      <StatusBar barStyle="dark-content" />
     </View>
   );
 }
@@ -76,7 +82,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
+    paddingBottom: 10,
+  },
+
+  content: {
+    flex: 1,
     alignItems: 'center',
+    width: '100%',
     justifyContent: 'center',
   },
 
