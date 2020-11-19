@@ -85,7 +85,7 @@ export default class ResultsScreen extends Component<ResultProps, ResultsState> 
     } else if (examType === 'free') {
       return 'Prueba Libre';
     } else {
-      return 'Simulación examen VMT';
+      return 'Simulación VMT';
     }
   }
 
@@ -126,7 +126,7 @@ export default class ResultsScreen extends Component<ResultProps, ResultsState> 
     return this.state.examHistory.length > 0 ? (
       <>
         <Text style={styles.chartTitle}>Tus últimos resultados:</Text>
-        <GradesChart labels={this.chartLabels} data={this.chartScores} />
+        <GradesChart labels={this.chartLabels} data={this.chartScores.reverse()} />
       </>
     ) : (
         this.renderAlternativeMessage()
@@ -149,7 +149,7 @@ export default class ResultsScreen extends Component<ResultProps, ResultsState> 
            >
              <View style={styles.cardContent}>
              <Text style={styles.cardTitle}>{this.getExamType(exam)}</Text>
-             <Chip name={exam.grade}/>
+             <Chip name={parseFloat(exam.grade).toFixed(2)}/>
              </View>
            </TouchableOpacity>
           ))}
