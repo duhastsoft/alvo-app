@@ -16,6 +16,7 @@ import Select from '@/components/dropdown/Select';
 import constants from '@/constants';
 import BottomSheet from '@/components/BottomSheet'; 
 import MultiSelect from '@/components/dropdown/MultiSelect';
+import { element } from 'prop-types';
 
 
 interface DirectoryProps {
@@ -62,9 +63,12 @@ export default class DirectoryScreen extends React.Component<DirectoryProps>{
         }
     };
 
-    selectService(target: string): void {
+    selectService(target: ServiceItem): void {
+        const category = this.state.categories.find((e)=>{
+            return e.id == target.categoryId;
+        })
         this.props.navigation.dangerouslyGetParent()?.navigate('Service', {
-            id: target
+            id: target.id, categoryName: category?.name
         });
     }
 

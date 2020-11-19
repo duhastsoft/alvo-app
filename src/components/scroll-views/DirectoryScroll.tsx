@@ -7,7 +7,7 @@ import {ServiceItem} from '@/constants/Directory'
 export interface DirectoryScrollProps {
   style?: StyleProp<ViewStyle>;
   styleItems?: StyleProp<ViewStyle>;
-  onPressItem: (index: string) => void;
+  onPressItem: (index: any) => void;
   list: ServiceItem[];
   header: boolean;
 }
@@ -65,6 +65,7 @@ export default function DirectoryScroll(props: DirectoryScrollProps) {
               icon={{name:'toolbox', type:'material-community',color:'gray'}}
               id={item.id}
               name={item.name}
+              target={item}
               onPress={props.onPressItem}
             />
           }	
