@@ -52,14 +52,7 @@ export default class DirectoryScreen extends React.Component<DirectoryProps>{
 
     onSelectedItemsChange(selected: ListItem, filterIndex: number)  {
         const {search} = this.state;
-        switch(filterIndex){
-            case 0:
-                search.filters[filterIndex] = selected;
-            break;
-            case 1:
-                search.filters[filterIndex] = selected;
-            break;
-        }
+        search.filters[filterIndex] = selected;
         this.state.services = this.state.dataSource;
         this.state.search.text = '';
         this.state.services = this.state.dataSource.filter(e=> {
@@ -80,11 +73,14 @@ export default class DirectoryScreen extends React.Component<DirectoryProps>{
     }
 
     searchFilterFunction = (text: string): void => {
+        const {search} = this.state;
         const searched = text;
         const newData = this.state.dataSource.filter(function (item) {
             const itemData = item.name ? item.name.toUpperCase() : ''.toUpperCase();
             const textData = searched.toUpperCase();
-            return itemData.indexOf(textData) > -1;
+            return itemData.indexOf(textData) > -1 && (search.filters[0].index == item.categoryId || search.filters[0].index=='0')
+            && (search.filters[1].name == item.states || search.filters[1].index=='0')
+            && (search.filters[2].name == item.cities  || search.filters[2].index=='0');
         });
         this.setState({
             services: newData,
@@ -128,10 +124,11 @@ export default class DirectoryScreen extends React.Component<DirectoryProps>{
                         states.push({id: 'states-'+states.length.toString(), name: element.states, index: cities.length.toString()});
                     }		
                 });
-                this.state.search.filters[1] = defaultState;
-                this.state.search.filters[2] = defaultCity;
                 this.state.states = states;
+                this.state.search.filters[1] = defaultState;
                 this.state.cities = cities;
+                this.state.search.filters[2] = defaultCity;
+                
             }
             catch (err) {
                 this.state.dataSource = [];

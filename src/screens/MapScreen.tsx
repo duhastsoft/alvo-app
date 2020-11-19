@@ -9,7 +9,7 @@ import {
   Platform,
   Image,
 } from 'react-native';
-import MapView, { Marker } from 'react-native-maps';
+import MapView, { Marker } from 'react-native-maps'
 import LoadingComponent from '@/components/LoadingComponent';
 import Button, { ButtonTypes } from '@/components/buttons/Button';
 import { StackNavigationProp } from '@react-navigation/stack';
@@ -92,7 +92,6 @@ export default class MapScreen extends Component<MapProps, MapState> {
         });
       },
       (error) => {
-        console.log('AN ERROR HAPPENED');
         console.log(error.message);
         this.setState({ isLoading: false });
       }
@@ -119,7 +118,6 @@ export default class MapScreen extends Component<MapProps, MapState> {
         if (mapIndex !== index) {
           mapIndex = index;
           const { latitud, longitude } = this.state.schools![index];
-          console.log(this.mapRef.current);
           this.mapRef.current?.animateToRegion(
             {
               latitude: latitud,
@@ -198,7 +196,6 @@ export default class MapScreen extends Component<MapProps, MapState> {
                 latitude: parseFloat(school.latitud),
                 longitude: parseFloat(school.longitude),
               };
-              console.log(coords);
               return (
                 <Marker
                   key={index}
