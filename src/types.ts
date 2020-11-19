@@ -11,9 +11,9 @@ export type RootStackParamList = {
     id?: string;
   };
   Results: {
-    score: number;
-    correctAnswers: number;
-    numberQuestions: number;
+    score?: number;
+    correctAnswers?: number;
+    numberQuestions?: number;
   };
 };
 
