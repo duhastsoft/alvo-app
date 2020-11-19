@@ -24,7 +24,7 @@ export default class Select extends React.Component<SelectProps>{
     state = {
         onPressDropdown: false,
         color: '#cfd8dc',
-        currentSelected: this.props.data?.find(e=>e.id==this.props.selectedIndex) as ListItem
+        currentSelected: this.props.data?.find(e=>e.index==this.props.selectedIndex) as ListItem
     }
 
     dropdownListView = () => {

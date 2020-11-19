@@ -7,7 +7,7 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { BottomTabParamList } from '@/types';
 import BaseButton, { ButtonTypes } from '@/components/buttons/Button';
 import { ServiceItem,  Section, 
-    defaultCategory, wellWrittenC, wellWrittenS, ListItem, functionCast } from '@/constants/Directory';
+    defaultCategory, wellWrittenC, wellWrittenS, ListItem, functionCast, defaultCity, defaultState } from '@/constants/Directory';
 import LoadingComponent from '@/components/LoadingComponent'
 import SearchBarComponent from '@/components/SearchBarComponent';
 import {  Icon } from 'react-native-elements'
@@ -36,11 +36,12 @@ export default class DirectoryScreen extends React.Component<DirectoryProps>{
         search: {
             text: '',
             filters: [] as ListItem[],
-            selectedCategory: '0'
         },
         categories: [] as ListItem[],
         services: [] as ServiceItem[],
-        dataSource: [] as ServiceItem[]
+        dataSource: [] as ServiceItem[],
+        states: [] as ListItem[],
+        cities: [] as ListItem[]
     };
 
     toggleBottomNavigationView = () => {
@@ -51,24 +52,30 @@ export default class DirectoryScreen extends React.Component<DirectoryProps>{
 
     onSelectedItemsChange(selected: ListItem, filterIndex: number)  {
         const {search} = this.state;
-        const castFilter = functionCast(selected);
-        search.filters[filterIndex] = castFilter;
-        if(filterIndex==0){
-            if(selected.id!='0')
-                this.state.services = this.state.dataSource.filter(e=> e.categoryId==selected.id);
-            else
-                this.state.services = this.state.dataSource;
-            this.state.search.text = '';
-            this.state.search.selectedCategory = selected.id;
+        switch(filterIndex){
+            case 0:
+                search.filters[filterIndex] = selected;
+            break;
+            case 1:
+                search.filters[filterIndex] = selected;
+            break;
         }
+        this.state.services = this.state.dataSource;
+        this.state.search.text = '';
+        this.state.services = this.state.dataSource.filter(e=> {
+            return (search.filters[0].index == e.categoryId || search.filters[0].index=='0')
+            && (search.filters[1].name == e.states || search.filters[1].index=='0')
+            && (search.filters[2].name == e.cities  || search.filters[2].index=='0')
+        });
     };
 
     selectService(target: ServiceItem): void {
+        
         const category = this.state.categories.find((e)=>{
-            return e.id == target.categoryId;
-        })
+            return e.index == target.categoryId;
+        });
         this.props.navigation.dangerouslyGetParent()?.navigate('Service', {
-            id: target.id, categoryName: category?.name
+            id: target.index, categoryName: category?.name
         });
     }
 
@@ -88,18 +95,20 @@ export default class DirectoryScreen extends React.Component<DirectoryProps>{
     loadContent() {
         const requestCategories = '/service-category/all';
         const requestServices = '/service/all';
-        const requestSpecific = '/service-category/';
         const fetchData = async () => {
             try {
                 const resultCategories = await Axios.get(requestCategories);
                 const resultServices = await Axios.get(requestServices);
                 const arrayCategories = resultCategories.data.data;
-                const newCategories : Array<ListItem> = arrayCategories.map((e:ListItem)=>wellWrittenC(e));
+                const newCategories : Array<ListItem> = arrayCategories.map((e:ListItem)=>{
+                    return wellWrittenC(e, e.id)
+                });
                 const categories = [...newCategories];
                 categories.unshift(defaultCategory);
-                
                 const arrayServices = resultServices.data.data;
-                const newServices : Array<ServiceItem> = arrayServices.map((e:ServiceItem)=>wellWrittenS(e));
+                const newServices : Array<ServiceItem> = arrayServices.map((e:ServiceItem)=>{
+                    return wellWrittenS(e, e.id);
+                });
                 const services = [...newServices];
             
                 this.state.dataSource = services;
@@ -107,7 +116,22 @@ export default class DirectoryScreen extends React.Component<DirectoryProps>{
                 this.state.services = services;
 
                 this.state.search.filters[0] = defaultCategory;
-
+                const cities: ListItem[] = [];
+                cities.push(defaultCity);
+                const states: ListItem[] = [];
+                states.push(defaultState);
+                services.forEach(element=>{	
+                    if(!cities.some(e =>e.name==element.cities)){	
+                        cities.push({id: 'cities-'+cities.length.toString(), name: element.cities, index: cities.length.toString()});
+                    }		
+                    if(!states.some(e =>e.name==element.states)){	
+                        states.push({id: 'states-'+states.length.toString(), name: element.states, index: cities.length.toString()});
+                    }		
+                });
+                this.state.search.filters[1] = defaultState;
+                this.state.search.filters[2] = defaultCity;
+                this.state.states = states;
+                this.state.cities = cities;
             }
             catch (err) {
                 this.state.dataSource = [];
@@ -125,7 +149,7 @@ export default class DirectoryScreen extends React.Component<DirectoryProps>{
     }
 
     render() {
-        const { categories, services, isLoading, search, isVisible } = this.state;
+        const { categories, services, isLoading, search, isVisible, cities, states } = this.state;
         if (isLoading) {
             return (<LoadingComponent text={'Loading directory'} />)
         }
@@ -140,7 +164,6 @@ export default class DirectoryScreen extends React.Component<DirectoryProps>{
 
                 <FilterCard
                     data={search.filters}
-                    onDeleteFilterTag={this.toggleBottomNavigationView}
                     onPressFilter={this.toggleBottomNavigationView}
                     icon={{ size: 16, color: constants.colors.darkCyan, name: 'filter', type: 'antdesign' }}
                 />
@@ -162,7 +185,27 @@ export default class DirectoryScreen extends React.Component<DirectoryProps>{
                             data = {categories}
                             onPressDropdown = {false}
                             filterIndex={0}
-                            selectedIndex={search.selectedCategory}
+                            selectedIndex={search.filters[0].index}
+                            onSelectItem={this.onSelectedItemsChange}
+                            itemsIcon={{ size: 16, color: constants.colors.darkCyan, name: 'filter', type: 'antdesign' }} />
+                        </View>
+                        <View>
+                            <Select 
+                            title={'Departamento'}
+                            data = {states}
+                            onPressDropdown = {false}
+                            filterIndex={1}
+                            selectedIndex={search.filters[1].index}
+                            onSelectItem={this.onSelectedItemsChange}
+                            itemsIcon={{ size: 16, color: constants.colors.darkCyan, name: 'filter', type: 'antdesign' }} />
+                        </View>
+                        <View>
+                            <Select 
+                            title={'Municipio'}
+                            data = {cities}
+                            onPressDropdown = {false}
+                            filterIndex={2}
+                            selectedIndex={search.filters[2].index}
                             onSelectItem={this.onSelectedItemsChange}
                             itemsIcon={{ size: 16, color: constants.colors.darkCyan, name: 'filter', type: 'antdesign' }} />
                         </View>
