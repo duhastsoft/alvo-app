@@ -9,6 +9,8 @@ import { BottomTabParamList } from '@/types';
 import { StackNavigationProp } from '@react-navigation/stack';
 import React from 'react';
 import { StatusBar, StyleSheet, Text, View } from 'react-native';
+import ButtonwithIcon from '@/components/buttons/BaseIconTextButton';
+import constants from '@/constants';
 
 const DEFAULT_QUIZ_SIZE = 20;
 
@@ -66,10 +68,11 @@ export default function Home({ navigation }: HomeProps) {
           style={{ width: '100%' }}
           type={ButtonTypes.YELLOW}
         />
-        <Button
-          title="Historial de resultados"
+        <ButtonwithIcon
+          name={'Historial de resultados'}
           onPressEvent={() => navigation.dangerouslyGetParent()?.navigate('Results', {})}
-          style={{ width: '100%' }}
+          icon={{
+            name:'history', type:'material',color:'white'}}
         />
       </View>
       <View style={{ alignItems: 'center' }}>

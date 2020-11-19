@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { ImageSourcePropType, ScrollView, StyleProp, ViewStyle, StyleSheet, View, SectionList, Text } from 'react-native';
 import ServiceCategory from '../card/DirectoryCard';
+import Charging from '../card/DirectoryCardwithIcon';
 import constants from '@/constants';
 import {ServiceItem} from '@/constants/Directory'
 
@@ -45,7 +46,7 @@ export default function DirectoryScroll(props: DirectoryScrollProps) {
   if (props.list.length < 1 || !didMount) {
     return (
       <View style={styles.container}>
-        <ServiceCategory
+        <Charging
           id={'0'}
           key={0}
           name={'CARGANDO...'}
