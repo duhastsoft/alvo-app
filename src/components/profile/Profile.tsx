@@ -3,7 +3,7 @@ import {
     Image,
     ImageSourcePropType,
     StyleProp, FlatList, StyleSheet, Text, View, ViewStyle, TouchableOpacity,
-    Linking, Alert, Platform, StatusBar
+    Linking, Alert, Platform, StatusBar, Share
 } from 'react-native';
 import constants from '@/constants';
 import { Icon } from 'react-native-elements';
@@ -86,6 +86,18 @@ export default function Profile(props: ProfileProps) {
             console.warn(error);
         }
     };
+    
+    const onShare = async () => {
+        try {
+            // Aqui va lo que se comparte
+          const result = await Share.share({
+            message: 'El número de contacto de '+ props.name +' es ' +props.phone+ ' puedes ver más detalles dentro de la aplicación de alvo',
+          });
+        } catch (error) {
+          alert(error.message);
+        }
+      };
+
     return (
         <View style={styles.container}>
             <StatusBar barStyle="dark-content" />
@@ -129,7 +141,7 @@ export default function Profile(props: ProfileProps) {
                         </View>
                     </View>
                     <View style={styles.quickactions}>
-                        <TouchableOpacity onPress={props.onPress} style={styles.button}>
+                        <TouchableOpacity onPress={onShare} style={styles.button}>
                             <Icon
                                 name='share-apple'
                                 type='evilicon'
