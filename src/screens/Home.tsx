@@ -1,5 +1,6 @@
 import BookImage from '@/assets/images/book-1.png';
 import ConeImage from '@/assets/images/cone-1.png';
+import VMTimage from '@/assets/images/VMT.png';
 import StopImage from '@/assets/images/stop-sign-1.png';
 import TireImage from '@/assets/images/tire-1.png';
 import Button, { ButtonTypes } from '@/components/buttons/Button';
@@ -28,7 +29,7 @@ const options = [
     id: 2,
     limit: DEFAULT_QUIZ_SIZE,
   },
-  { image: ConeImage, title: 'Examen VMT', type: 'vmt' },
+  { image: VMTimage, title: 'Examen VMT', type: 'vmt' },
 ];
 
 interface HomeProps {
