@@ -21,17 +21,13 @@ export default class FilterCard extends React.Component<FilterCardProps>{
     }
 
     buttonPress(indexS: string) {
-        this.props.onDeleteFilterTag!(indexS);
+        this.props.onPressFilter();
     }
 
     renderItem = ({ item }: { item: ListItem }) => (
         <Chip name={item.name}
             key={item.id}
-            onPress={() => {
-                if (this.props.onDeleteFilterTag){
-                    this.buttonPress(item.id)
-                }
-        }} />
+            onPress={() => {this.buttonPress(item.id)}} />
     );
 
     render() {
