@@ -9,6 +9,7 @@ export type RootStackParamList = {
   };
   Service: {
     id?: string;
+    categoryName?: string;
   };
   Results: {
     score: number;

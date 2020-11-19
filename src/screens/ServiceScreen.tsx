@@ -40,7 +40,7 @@ const defaultData: ProfileData ={
 }
 
 export default function ServiceScreen(props: ServiceScreenProps){
-    const { id } = props.route.params;
+    const { id, categoryName } = props.route.params;
     const [profile, setProfile] = useState(defaultData);
     const [didMount, setDidMount] = useState(false); 
 
@@ -66,7 +66,7 @@ export default function ServiceScreen(props: ServiceScreenProps){
              image={profile.image}
              description={profile.description}
              address={profile.address}
-             category={props.category}
+             category={categoryName}
              hours={profile.serviceHours}
              phone={profile.contactNumber}
             />
