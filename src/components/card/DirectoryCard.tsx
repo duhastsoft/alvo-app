@@ -31,9 +31,6 @@ export default class ServiceCategory extends React.Component<CardCategoryProps>{
             activeOpacity={0.8}
             >
                 <View style={styles.cardContent}>
-
-                    <Icon 
-                    name={icon.name} type={icon.type} size={icon.size} color={icon.color} />
                     <Text style={styles.cardTitle}>{name}</Text>
                 </View>
             </TouchableOpacity>
