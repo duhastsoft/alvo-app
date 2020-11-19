@@ -5,11 +5,13 @@ import { RootStackParamList } from '@/types';
 import { RouteProp } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import Axios from 'axios';
+import * as SecureStore from 'expo-secure-store';
 import React, { Component } from 'react';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 
 interface Question {
+  id: number;
   text: string;
   image?: string;
   answer1: string;
@@ -20,6 +22,12 @@ interface Question {
   requiresOrder: boolean;
 }
 
+interface ExamQuestion {
+  id: number;
+  selectedAnswer: number;
+  rightAnswer: number;
+}
+
 interface QuizState {
   loading: boolean;
   counter: number;
@@ -27,7 +35,12 @@ interface QuizState {
   selectedIndex: number;
   selectedAnswer: number;
   answerConfirmed: boolean;
-  questions?: Question[];
+  userToken: string;
+  questions: Question[];
+  exam: ExamQuestion[];
+  startTime?: Date;
+  endTime?: Date;
+  submittingExam: boolean;
 }
 
 interface QuizProps {
@@ -43,10 +56,14 @@ export default class QuizScreen extends Component<QuizProps, QuizState> {
     selectedIndex: -1,
     selectedAnswer: -1,
     answerConfirmed: false,
+    userToken: '',
+    questions: [],
+    exam: [],
+    submittingExam: false,
   };
 
   get currentQuestion() {
-    return this.state.questions![this.state.counter];
+    return this.state.questions[this.state.counter];
   }
 
   async componentDidMount() {
@@ -58,7 +75,9 @@ export default class QuizScreen extends Component<QuizProps, QuizState> {
       });
       const quiz = response.data.data;
 
-      this.setState({ questions: quiz, loading: false });
+      const userToken = (await SecureStore.getItemAsync('token')) || '';
+
+      this.setState({ questions: quiz, loading: false, userToken, startTime: new Date() });
     } catch (err) {
       console.log(err);
     }
@@ -70,28 +89,65 @@ export default class QuizScreen extends Component<QuizProps, QuizState> {
     }
   };
 
-  nextQuestionHandler = () => {
-    const { navigation } = this.props;
-    const { questions, selectedAnswer, counter } = this.state;
-    if (this.state.answerConfirmed) {
-      if (counter < this.state.questions!.length - 1) {
-        if (questions![counter].rightAnswer === selectedAnswer) {
-          this.setState((prev) => ({ correctAnswers: prev.correctAnswers + 1 }));
-        }
+  submitExamResult = async (lastQuestion: ExamQuestion) => {
+    const { userToken } = this.state;
+    if (userToken) {
+      try {
+        const { exam, startTime } = this.state;
+        const { type, category } = this.props.route.params;
+        await Axios.post(
+          '/quiz',
+          {
+            startTime,
+            category,
+            examType: type,
+            endTime: new Date(),
+            questions: [...exam, lastQuestion],
+          },
+          { headers: { Authorization: `Bearer ${userToken}` } }
+        );
+      } catch (error) {
+        throw error;
+      }
+    }
+  };
 
-        this.setState((prevState) => ({
-          counter: prevState.counter + 1,
-          selectedAnswer: -1,
-          selectedIndex: -1,
-          answerConfirmed: false,
-        }));
-      } else {
-        const score = (this.state.correctAnswers / this.state.questions!.length) * 10;
-        navigation.replace('Results', {
-          score,
-          correctAnswers: this.state.correctAnswers,
-          numberQuestions: this.state.questions!.length,
-        });
+  nextQuestionHandler = () => {
+    if (this.state.answerConfirmed) {
+      const { navigation } = this.props;
+      const { questions, selectedAnswer, counter, correctAnswers } = this.state;
+      const { rightAnswer } = questions[counter];
+
+      const newCorrectAnswers = correctAnswers + (rightAnswer === selectedAnswer ? 1 : 0);
+      const currentExamQuestion = { id: questions[counter].id, selectedAnswer, rightAnswer };
+
+      this.setState((prevState) => ({
+        counter: prevState.counter + (counter < questions.length - 1 ? 1 : 0),
+        selectedAnswer: -1,
+        selectedIndex: -1,
+        answerConfirmed: false,
+        correctAnswers: newCorrectAnswers,
+        exam: [...prevState.exam, currentExamQuestion],
+      }));
+
+      if (counter === questions.length - 1) {
+        this.setState((prevState) => ({ ...prevState, submittingExam: true }));
+
+        const score = (newCorrectAnswers / questions.length) * 10;
+
+        this.submitExamResult(currentExamQuestion)
+          .then()
+          .catch((err) => {
+            const { message } = err.response.data;
+            console.error('Could not submit exam:', message);
+          })
+          .finally(() => {
+            navigation.replace('Results', {
+              score,
+              correctAnswers: newCorrectAnswers,
+              numberQuestions: questions.length,
+            });
+          });
       }
     } else if (this.state.selectedIndex != -1) {
       this.setState({ answerConfirmed: true });
@@ -106,6 +162,13 @@ export default class QuizScreen extends Component<QuizProps, QuizState> {
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="#00848C" />
           <Text style={styles.loadingText}>Cargando siguiente pregunta</Text>
+        </View>
+      );
+    } else if (this.state.submittingExam) {
+      return (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#00848C" />
+          <Text style={styles.loadingText}>Calculando su resultado...</Text>
         </View>
       );
     } else {
@@ -143,7 +206,8 @@ export default class QuizScreen extends Component<QuizProps, QuizState> {
         <Button
           type={ButtonTypes.YELLOW}
           title={this.state.answerConfirmed ? 'Siguiente' : 'Confirmar respuesta'}
-          onPressEvent={this.nextQuestionHandler}
+          onPressEvent={!this.state.submittingExam ? this.nextQuestionHandler : undefined}
+          loading={this.state.submittingExam}
         />
       </View>
     );
