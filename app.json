@@ -17,6 +17,9 @@
     "ios": {
       "supportsTablet": true
     },
+    "android":{
+      "permissions":["READ_CONTACTS","WRITE_CONTACTS"]
+    },
     "web": {
       "favicon": "./src/assets/favicon.png"
     },

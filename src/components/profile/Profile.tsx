@@ -1,13 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
     Image,
     ImageSourcePropType,
     StyleProp, FlatList, StyleSheet, Text, View, ViewStyle, TouchableOpacity,
-    Linking, Alert, Platform 
+    Linking, Alert, Platform, StatusBar
 } from 'react-native';
 import constants from '@/constants';
 import { Icon } from 'react-native-elements';
+//import * as NativeContacts from 'react-native-contacts';
 import { ScrollView } from 'react-native-gesture-handler';
+import * as Contacts from 'expo-contacts';
+
 
 
 export interface ProfileProps {
@@ -23,81 +26,145 @@ export interface ProfileProps {
     onPress?: () => void;
 }
 
-function makeCall(phone:string){
+function makeCall(phone: string) {
     console.log('callNumber ----> ', phone);
     let phoneNumber = phone;
     if (Platform.OS !== 'android') {
-      phoneNumber = `telprompt:${phone}`;
+        phoneNumber = `telprompt:${phone}`;
     }
-    else  {
-      phoneNumber = `tel:${phone}`;
+    else {
+        phoneNumber = `tel:${phone}`;
     }
     Linking.canOpenURL(phoneNumber)
-    .then(supported => {
-      if (!supported) {
-        Alert.alert('Este numero no esta disponible');
-      } else {
-        return Linking.openURL(phoneNumber);
-      }
-    })
-    .catch(err => console.log(err));
+        .then(supported => {
+            if (!supported) {
+                Alert.alert('Este numero no esta disponible');
+            } else {
+                return Linking.openURL(phoneNumber);
+            }
+        })
+        .catch(err => console.log(err));
 }
 
-
-
 export default function Profile(props: ProfileProps) {
+
+    const permissionFlow = async () => {
+        try {
+            const { status } = await Contacts.requestPermissionsAsync();
+            console.log("permissionFlow status:", status)
+            if (status === 'granted') {
+                console.log("permissionFlow inside status:", status)
+                //abrir pantalla de agregar contacto
+                //verificar si contacto ya fue guardado
+                const PhoneNumber = {
+                    number: '2243-4420',
+                    isPrimary: true,
+                    digits: '22434420',
+                    countryCode: '+503',
+                    label: 'main',
+                    id: '',
+
+                };
+                const contact = {
+                    name: props.name,
+                    contactType: 'company',
+                    firstName: props.name,
+                    //lastName:'Styles',
+                    //phoneNumbers:PhoneNumber, //no queda claro el formato que espera para recibir numero 
+                    note: 'this is anote',
+                    id: '',
+                };
+
+                /*   const contact = {
+                     [Contacts.Fields.Name]: props.name,
+                     [Contacts.Fields.ContactType]: 'company',
+                     [Contacts.Fields.FirstName]: props.name,
+                     [Contacts.Fields.PhoneNumbers]:props.phone
+     
+                 };*/
+                const FormOptions = {
+                    displayedPropertyKeys: [],
+                    message: 'form options message',
+                    alternateName: undefined,
+                    allowsEditing: false,
+                    allowsActions: false,
+                    shouldShowLinkedContacts: false,
+                    isNew: true,
+                    cancelButtonTitle: 'Cancelar',
+                    preventAnimation: false,
+                    groupId: undefined
+                };
+                /*const contactId = await Contacts.addContactAsync(contact);
+                const newcontact = await Contacts.getContactByIdAsync(contactId);
+               if (newcontact) {
+               console.log('After:',newcontact);
+               }*/
+                Contacts.presentFormAsync(undefined, contact, FormOptions);
+
+            } else {
+                Linking.openURL('app-settings:');
+                console.log("permissionFlow status2:", status)
+                return;
+            }
+        } catch (error) {
+            console.warn(error);
+        }
+    };
     return (
         <View style={styles.container}>
-            <View style={styles.header}>
-                <View style={styles.headerImage}>
-                    <Image source={{ uri: props.image }} style={styles.image} /></View>
-                <View style={styles.headerText} >
-                    <Text style={styles.name}>{props.name}</Text>
-                    <View style={styles.category}>
-                        <Text style={styles.categoryText}>{props.category}</Text>
+            <StatusBar barStyle="dark-content" />
+            <View>
+                <View style={styles.header}>
+                    <View style={styles.headerImage}>
+                        <Image source={{ uri: props.image }} style={styles.image} /></View>
+                    <View style={styles.headerText} >
+                        <Text style={styles.name}>{props.name}</Text>
+                        <View style={styles.category}>
+                            <Text style={styles.categoryText}>{props.category}</Text>
+                        </View>
                     </View>
                 </View>
-            </View>
-            <View style={styles.quickactionsbutton}>
-                <View style={styles.quickactions} >
-                    <TouchableOpacity onPress={()=>makeCall(props.phone)} style={styles.button}>
-                        <Icon
-                            name='call'
-                            type='material'
-                            size={22}
-                            color= {constants.colors.darkCyan}
-                            containerStyle={{ marginTop: 2 }}
-                        />
+                <View style={styles.quickactionsbutton}>
+                    <View style={styles.quickactions} >
+                        <TouchableOpacity onPress={() => makeCall(props.phone)} style={styles.button}>
+                            <Icon
+                                name='call'
+                                type='material'
+                                size={22}
+                                color={constants.colors.darkCyan}
+                                containerStyle={{ marginTop: 2 }}
+                            />
 
-                    </TouchableOpacity>
-                    <Text style={styles.quickactionsText}>llamar</Text>
-                </View>
-                <View style={styles.quickactions}>
-                    <TouchableOpacity onPress={props.onPress} style={styles.button}>
-                        <Icon
-                            name='user-circle'
-                            type='font-awesome-5'
-                            size={18}
-                            color={constants.colors.darkCyan}
-                            containerStyle={{ marginTop: 2 }}
-                        />
-                    </TouchableOpacity>
-                    <View >
-                        <Text style={styles.quickactionsText}>guardar</Text>
+                        </TouchableOpacity>
+                        <Text style={styles.quickactionsText}>llamar</Text>
                     </View>
-                </View>
-                <View style={styles.quickactions}>
-                    <TouchableOpacity onPress={props.onPress} style={styles.button}>
-                        <Icon
-                            name='share-apple'
-                            type='evilicon'
-                            size={30}
-                            color={constants.colors.darkCyan}
-                            containerStyle={{ marginTop: 2 }}
-                        />
-                    </TouchableOpacity>
-                    <View>
-                        <Text style={styles.quickactionsText}>compartir</Text>
+                    <View style={styles.quickactions}>
+                        <TouchableOpacity onPress={permissionFlow} style={styles.button}>
+                            <Icon
+                                name='user-circle'
+                                type='font-awesome-5'
+                                size={18}
+                                color={constants.colors.darkCyan}
+                                containerStyle={{ marginTop: 2 }}
+                            />
+                        </TouchableOpacity>
+                        <View >
+                            <Text style={styles.quickactionsText}>guardar</Text>
+                        </View>
+                    </View>
+                    <View style={styles.quickactions}>
+                        <TouchableOpacity onPress={props.onPress} style={styles.button}>
+                            <Icon
+                                name='share-apple'
+                                type='evilicon'
+                                size={30}
+                                color={constants.colors.darkCyan}
+                                containerStyle={{ marginTop: 2 }}
+                            />
+                        </TouchableOpacity>
+                        <View>
+                            <Text style={styles.quickactionsText}>compartir</Text>
+                        </View>
                     </View>
                 </View>
             </View>
@@ -115,12 +182,40 @@ export default function Profile(props: ProfileProps) {
                 </View>
                 <View style={styles.details}>
                     <Text style={styles.detailTitle}>Teléfono</Text>
-                    <Text style={styles.detailDescription} onPress={()=>makeCall(props.phone)} >{props.phone}</Text>
+                    <Text style={styles.detailDescription} onPress={() => makeCall(props.phone)} >{props.phone}</Text>
                 </View>
             </View>
         </View>
     );
 }
+
+const exampleApp = {
+    expo: {
+        ios: {
+            infoPlist: {
+                NSCalendarsUsageDescription:
+                    'Allow Expo experiences to access your calendar',
+                NSCameraUsageDescription:
+                    'Expo uses your camera to scan project QR codes. Expo experiences you open may use the camera with the Expo camera API.',
+                NSContactsUsageDescription:
+                    'Allow Expo experiences to access your contacts',
+                NSLocationWhenInUseUsageDescription:
+                    'Allow Expo experiences to use your location',
+                NSMicrophoneUsageDescription:
+                    'Allow Expo experiences to access your microphone',
+                NSMotionUsageDescription:
+                    "Allow Expo experiences to access your device's accelerometer",
+                NSPhotoLibraryAddUsageDescription:
+                    'Give Expo experiences permission to save photos',
+                NSPhotoLibraryUsageDescription:
+                    'Give Expo experiences permission to access your photos',
+                NSRemindersUsageDescription:
+                    'Allow Expo experiences to access your reminders',
+            },
+        },
+    },
+};
+
 
 const styles = StyleSheet.create({
     container: {
@@ -166,7 +261,7 @@ const styles = StyleSheet.create({
     },
     quickactionsbutton: {
         padding: 14,
-        paddingHorizontal:52,
+        paddingHorizontal: 52,
         flexDirection: 'row',
         borderBottomWidth: 0.2,
         backgroundColor: constants.colors.darkCyan,
@@ -193,12 +288,12 @@ const styles = StyleSheet.create({
         paddingTop: 4,
         fontSize: 12,
         textAlign: 'center',
-        color:'white',
+        color: 'white',
     },
     details: {
         padding: 14,
         paddingVertical: 14,
-        borderBottomWidth: 0.2,
+        borderBottomWidth: 0.8,
         borderBottomColor: '#cfd8dc',
     },
     detailTitle: {
@@ -213,5 +308,5 @@ const styles = StyleSheet.create({
     normalText: {
         fontSize: 16,
         color: 'black'
-    }
+    },
 });
