@@ -241,6 +241,7 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         paddingHorizontal: 12,
         paddingVertical: 6,
+        width:100
     },
     categoryText: {
         fontSize: 14,

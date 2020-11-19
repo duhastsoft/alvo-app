@@ -1,5 +1,5 @@
 import React, { useState, useEffect} from 'react';
-import { ActivityIndicator, ImagePropTypes, SectionList, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, ImagePropTypes, SectionList, StatusBar, StyleSheet, Text, View } from 'react-native';
 import axios from 'axios';
 import { RootStackParamList } from '@/types';
 import { RouteProp } from '@react-navigation/native';
@@ -60,6 +60,7 @@ export default function ServiceScreen(props: ServiceScreenProps){
     }
     return(
         <View style={styles.container}>
+            <StatusBar barStyle="dark-content"/>
             <Profile
              key={id}
              name= {profile.name}

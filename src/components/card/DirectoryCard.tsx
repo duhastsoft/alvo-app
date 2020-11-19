@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
       width: '100%',
     },
     cardTitle: {
-      color: '#00848c',
+      color: 'black',
       textAlign: 'left',
       flexBasis: '80%',
       fontSize:16,

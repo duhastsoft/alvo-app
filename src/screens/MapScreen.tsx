@@ -159,7 +159,7 @@ export default class MapScreen extends Component<MapProps, MapState> {
 
   selectService(target: number): void {
     this.props.navigation.dangerouslyGetParent()?.navigate('Service', {
-      id: target,
+      id: target, categoryName: 'Escuelas'
     });
   }
 

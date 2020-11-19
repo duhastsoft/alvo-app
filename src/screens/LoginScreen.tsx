@@ -9,6 +9,7 @@ import * as SecureStore from 'expo-secure-store';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '@/types';
 import { Link } from '@react-navigation/native';
+import constants from '@/constants';
 
 interface LoginProps {
   navigation: StackNavigationProp<RootStackParamList, 'Login'>;
@@ -176,6 +177,6 @@ const styles = StyleSheet.create({
   },
 
   textLink: {
-    color: '#2C45E1',
+    color: constants.colors.darkCyan,
   },
 });
