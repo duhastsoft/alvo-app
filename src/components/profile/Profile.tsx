@@ -7,8 +7,6 @@ import {
 } from 'react-native';
 import constants from '@/constants';
 import { Icon } from 'react-native-elements';
-//import * as NativeContacts from 'react-native-contacts';
-import { ScrollView } from 'react-native-gesture-handler';
 import * as Contacts from 'expo-contacts';
 
 
@@ -27,7 +25,6 @@ export interface ProfileProps {
 }
 
 function makeCall(phone: string) {
-    console.log('callNumber ----> ', phone);
     let phoneNumber = phone;
     if (Platform.OS !== 'android') {
         phoneNumber = `telprompt:${phone}`;
@@ -51,37 +48,23 @@ export default function Profile(props: ProfileProps) {
     const permissionFlow = async () => {
         try {
             const { status } = await Contacts.requestPermissionsAsync();
-            console.log("permissionFlow status:", status)
             if (status === 'granted') {
-                console.log("permissionFlow inside status:", status)
-                //abrir pantalla de agregar contacto
-                //verificar si contacto ya fue guardado
-                const PhoneNumber = {
-                    number: '2243-4420',
-                    isPrimary: true,
-                    digits: '22434420',
-                    countryCode: '+503',
-                    label: 'main',
-                    id: '',
-
-                };
                 const contact = {
                     name: props.name,
                     contactType: 'company',
                     firstName: props.name,
                     //lastName:'Styles',
-                    //phoneNumbers:PhoneNumber, //no queda claro el formato que espera para recibir numero 
+                    phoneNumbers: [
+                        {
+                            id: '',
+                            number: '+503'+ props.phone,
+                            isPrimary: true,
+                            label: 'Phone'
+                        }
+                    ], 
                     note: 'this is anote',
                     id: '',
                 };
-
-                /*   const contact = {
-                     [Contacts.Fields.Name]: props.name,
-                     [Contacts.Fields.ContactType]: 'company',
-                     [Contacts.Fields.FirstName]: props.name,
-                     [Contacts.Fields.PhoneNumbers]:props.phone
-     
-                 };*/
                 const FormOptions = {
                     displayedPropertyKeys: [],
                     message: 'form options message',
@@ -94,16 +77,9 @@ export default function Profile(props: ProfileProps) {
                     preventAnimation: false,
                     groupId: undefined
                 };
-                /*const contactId = await Contacts.addContactAsync(contact);
-                const newcontact = await Contacts.getContactByIdAsync(contactId);
-               if (newcontact) {
-               console.log('After:',newcontact);
-               }*/
                 Contacts.presentFormAsync(undefined, contact, FormOptions);
-
             } else {
                 Linking.openURL('app-settings:');
-                console.log("permissionFlow status2:", status)
                 return;
             }
         } catch (error) {
