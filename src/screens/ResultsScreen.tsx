@@ -1,50 +1,121 @@
-import { Text, View, StyleSheet, Platform, StatusBar, Dimensions } from 'react-native';
-import React, { Component } from 'react';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { RootStackParamList } from '@/types';
-import { RouteProp } from '@react-navigation/native';
-import GradesChart from '../components/charts/GradesChart';
 import Button, { ButtonTypes } from '@/components/buttons/Button';
+import constants from '@/constants';
+import { RootStackParamList } from '@/types';
+import { Link, RouteProp } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+import Axios from 'axios';
+import * as SecureStore from 'expo-secure-store';
+import React, { Component } from 'react';
+import { ActivityIndicator, Platform, StatusBar, StyleSheet, Text, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
+import GradesChart from '../components/charts/GradesChart';
+
+interface ExamRecord {
+  startTime: Date;
+  grade: string;
+}
 
 interface ResultProps {
   navigation: StackNavigationProp<RootStackParamList, 'Results'>;
   route: RouteProp<RootStackParamList, 'Results'>;
 }
 
-export default class ResultsScreen extends Component<ResultProps> {
+interface ResultsState {
+  examHistory: ExamRecord[];
+  loading: boolean;
+  userToken: string;
+}
+export default class ResultsScreen extends Component<ResultProps, ResultsState> {
+  state: ResultsState = {
+    examHistory: [],
+    loading: true,
+    userToken: '',
+  };
+
+  async componentDidMount() {
+    let userToken: string = '';
+    try {
+      userToken = (await SecureStore.getItemAsync('token')) || '';
+      if (userToken) {
+        const response = await Axios.get('/quiz/history', {
+          params: { limit: 5 },
+          headers: { Authorization: `Bearer ${userToken}` },
+        });
+        const examHistory = response.data.data;
+        this.setState((prevState) => ({ ...prevState, examHistory }));
+      }
+    } catch (error) {
+      console.error(error.response.data);
+    } finally {
+      this.setState((prevState) => ({ ...prevState, loading: false, userToken }));
+    }
+  }
+
   get resultMessage() {
     const { params } = this.props.route;
-    if (params.score <= 5) return '¡Anímate! Sigue practicando';
-    else if (params.score <= 7) return '¡Puedes mejorar esa nota!';
+    if (params.score && params.score <= 5) return '¡Anímate! Sigue practicando';
+    else if (params.score && params.score <= 7) return '¡Puedes mejorar esa nota!';
     else return '¡Lo hiciste muy bien!';
   }
 
-  render() {
+  get chartLabels() {
+    return this.state.examHistory.map((_, index) => `${index + 1}`);
+  }
+
+  get chartScores() {
+    return this.state.examHistory.map((exam) => parseFloat(exam.grade));
+  }
+
+  renderResult = () => {
     const { score, numberQuestions, correctAnswers } = this.props.route.params;
+    return score && numberQuestions && correctAnswers ? (
+      <>
+        <Text style={styles.title}>Tu puntación:</Text>
+
+        <Text style={styles.scoreText}>{score?.toFixed(1)}</Text>
+
+        <Text
+          style={styles.subtitle}
+        >{`${correctAnswers}/${numberQuestions} respuestas correctas`}</Text>
+
+        <Text style={{ marginBottom: 24 }}>{this.resultMessage}</Text>
+      </>
+    ) : null;
+  };
+
+  renderAlternativeMessage = () => {
+    return this.state.loading ? (
+      <View style={{ alignItems: 'center' }}>
+        <ActivityIndicator size="large" color={constants.colors.darkCyan} />
+        <Text style={styles.textNormal}>Cargando el historial</Text>
+      </View>
+    ) : (
+      <View style={{ alignItems: 'center' }}>
+        <Text style={styles.textNormal}>Si quieres ver un historial de tus resultados</Text>
+        <Link to="/Login" style={styles.textLink}>
+          Inicia sesión con tu cuenta
+        </Link>
+      </View>
+    );
+  };
+
+  renderChart = () => {
+    return this.state.examHistory.length > 0 ? (
+      <>
+        <Text style={styles.chartTitle}>Tus últimos resultados:</Text>
+        <GradesChart labels={this.chartLabels} data={this.chartScores} />
+      </>
+    ) : (
+      this.renderAlternativeMessage()
+    );
+  };
+
+  render() {
     return (
       <View style={styles.container}>
         <ScrollView contentContainerStyle={styles.scroll}>
-          <Text style={styles.title}>Tu puntación:</Text>
-
-          <Text style={styles.scoreText}>{score.toFixed(1)}</Text>
-
-          <Text
-            style={styles.subtitle}
-          >{`${correctAnswers}/${numberQuestions} respuestas correctas`}</Text>
-
-          <Text>{this.resultMessage}</Text>
-
-          <GradesChart
-            labels={['', '', '']}
-            data={[
-              Math.random() * 10,
-              Math.random() * 10,
-              Math.random() * 10,
-              Math.random() * 10,
-              score,
-            ]}
-          />
+          {this.renderResult()}
+          {this.renderChart()}
         </ScrollView>
 
         <Button
@@ -84,5 +155,19 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: 18,
     margin: 15,
+  },
+
+  textNormal: {
+    fontSize: 16,
+  },
+
+  textLink: {
+    fontSize: 16,
+    color: 'blue',
+  },
+
+  chartTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
   },
 });

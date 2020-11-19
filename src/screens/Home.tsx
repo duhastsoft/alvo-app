@@ -7,7 +7,6 @@ import Button, { ButtonTypes } from '@/components/buttons/Button';
 import Card from '@/components/card/Card';
 import { BottomTabParamList } from '@/types';
 import { StackNavigationProp } from '@react-navigation/stack';
-//import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { StatusBar, StyleSheet, Text, View } from 'react-native';
 
@@ -66,6 +65,11 @@ export default function Home({ navigation }: HomeProps) {
           }
           style={{ width: '100%' }}
           type={ButtonTypes.YELLOW}
+        />
+        <Button
+          title="Historial de resultados"
+          onPressEvent={() => navigation.dangerouslyGetParent()?.navigate('Results', {})}
+          style={{ width: '100%' }}
         />
       </View>
       <View style={{ alignItems: 'center' }}>

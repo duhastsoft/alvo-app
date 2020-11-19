@@ -12,9 +12,9 @@ export type RootStackParamList = {
     categoryName?: string;
   };
   Results: {
-    score: number;
-    correctAnswers: number;
-    numberQuestions: number;
+    score?: number;
+    correctAnswers?: number;
+    numberQuestions?: number;
   };
 };
 
