@@ -65,14 +65,17 @@ export default function Home({ navigation }: HomeProps) {
               limit: DEFAULT_QUIZ_SIZE,
             })
           }
-          style={{ width: '100%' }}
+          style={{ width: '100%', marginBottom: 20 }}
           type={ButtonTypes.YELLOW}
         />
         <ButtonwithIcon
           name={'Historial de resultados'}
           onPressEvent={() => navigation.dangerouslyGetParent()?.navigate('Results', {})}
           icon={{
-            name:'history', type:'material',color:'white'}}
+            name: 'history',
+            type: 'material',
+            color: 'white',
+          }}
         />
       </View>
       <View style={{ alignItems: 'center' }}>

@@ -6,8 +6,9 @@ import RegisterScreen from '@/screens/RegisterScreen';
 import ResultsScreen from '@/screens/ResultsScreen';
 import ServiceScreen from '@/screens/ServiceScreen';
 import { RootStackParamList } from '@/types';
-import { NavigationContainer, getFocusedRouteNameFromRoute } from '@react-navigation/native';
+import { getFocusedRouteNameFromRoute, NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import * as SecureStore from 'expo-secure-store';
 import React from 'react';
 import { Icon } from 'react-native-elements';
 import BottomTabsNavigator from './BottomTabsNavigator';
@@ -30,15 +31,28 @@ export default function Navigation() {
         <Stack.Screen
           name="Root"
           component={BottomTabsNavigator}
-          options={({ route }) => ({
+          options={({ route, navigation }) => ({
             headerTitle: getHeaderTitle(route),
             headerRight: () => (
               <Icon
-                name="info"
-                type="simple-line-icon"
+                name="log-out"
+                type="feather"
                 size={22}
                 color={'gray'}
                 containerStyle={{ marginBottom: 4, marginRight: 14 }}
+                onPress={() => {
+                  getUserToken()
+                    .then((token) => {
+                      if (token) {
+                        logout().then(() => {
+                          alert('Sesión finalizada');
+                        });
+                      } else {
+                        navigation.replace('Login');
+                      }
+                    })
+                    .catch((err) => console.error(err.message));
+                }}
               />
             ),
             headerLeft: () => <ActionBarImage />,
@@ -73,4 +87,12 @@ function getHeaderTitle(route: any) {
     case 'Schools':
       return 'Escuelas';
   }
+}
+
+async function getUserToken() {
+  return (await SecureStore.getItemAsync('token')) || '';
+}
+
+function logout() {
+  return SecureStore.deleteItemAsync('token');
 }

@@ -135,9 +135,14 @@ export default class LoginScreen extends Component<LoginProps, LoginState> {
             Regístrate
           </Link>
         </Text>
-        <Link to="/Root" style={styles.textLink}>
+        <Text
+          style={styles.textLink}
+          onPress={() => {
+            this.props.navigation.replace('Root');
+          }}
+        >
           Continuar como invitado
-        </Link>
+        </Text>
       </ScrollView>
     );
   }

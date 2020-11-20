@@ -10,7 +10,6 @@ interface GradesChartProps {
 
 export default function GradesChart(props: GradesChartProps) {
   const { labels, data } = props;
-  console.log(props);
   let [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0, visible: false, value: 0 });
 
   return (
