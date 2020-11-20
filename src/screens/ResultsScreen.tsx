@@ -6,7 +6,15 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import Axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
 import React, { Component } from 'react';
-import { ActivityIndicator, Platform, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {
+  ActivityIndicator,
+  Platform,
+  StatusBar,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import GradesChart from '../components/charts/GradesChart';
 import Chip from '@/components/buttons/ChipTextOnly';
@@ -93,7 +101,7 @@ export default class ResultsScreen extends Component<ResultProps, ResultsState> 
   renderResult = () => {
     const { score, numberQuestions, correctAnswers } = this.props.route.params;
     return score && numberQuestions && correctAnswers ? (
-      <View styles={{backgroundColor:constants.colors.darkCyan}}>
+      <View style={{backgroundColor:constants.colors.darkCyan}}>
       <ScoresView
         image={this.resultMessage.image}
         message={this.resultMessage.message}
@@ -111,13 +119,18 @@ export default class ResultsScreen extends Component<ResultProps, ResultsState> 
         <Text style={styles.textNormal}>Cargando el historial</Text>
       </View>
     ) : (
-        <View style={{ alignItems: 'center' }}>
-          <Text style={styles.textNormal}>Si quieres ver un historial de tus resultados</Text>
-          <Link to="/Login" style={styles.textLink}>
-            Inicia sesión con tu cuenta
-        </Link>
-        </View>
-      );
+      <View style={{ alignItems: 'center' }}>
+        <Text style={styles.textNormal}>Si quieres ver un historial de tus resultados</Text>
+        <Text
+          style={styles.textLink}
+          onPress={() => {
+            this.props.navigation.replace('Login');
+          }}
+        >
+          Inicia sesión con tu cuenta
+        </Text>
+      </View>
+    );
   };
 
   renderChart = () => {
@@ -127,8 +140,8 @@ export default class ResultsScreen extends Component<ResultProps, ResultsState> 
         <GradesChart labels={this.chartLabels} data={this.chartScores.reverse()} />
       </>
     ) : (
-        this.renderAlternativeMessage()
-      );
+      this.renderAlternativeMessage()
+    );
   };
 
   render() {
@@ -137,21 +150,16 @@ export default class ResultsScreen extends Component<ResultProps, ResultsState> 
         <ScrollView contentContainerStyle={styles.scroll}>
           {this.renderResult()}
           {this.renderChart()}
-          <View style={{flexDirection:'column'}}>
-          {this.state.examHistory.map((exam) => (
-             <TouchableOpacity
-             style={styles.card}
-             onPress={() => {
-             }}
-             activeOpacity={0.8}
-           >
-             <View style={styles.cardContent}>
-             <Text style={styles.cardTitle}>{this.getExamType(exam)}</Text>
-             <Chip name={parseFloat(exam.grade).toFixed(2)}/>
-             </View>
-           </TouchableOpacity>
-          ))}
-        </View>
+          <View style={{ flexDirection: 'column' }}>
+            {this.state.examHistory.map((exam) => (
+              <TouchableOpacity style={styles.card} onPress={() => {}} activeOpacity={0.8}>
+                <View style={styles.cardContent}>
+                  <Text style={styles.cardTitle}>{this.getExamType(exam)}</Text>
+                  <Chip name={parseFloat(exam.grade).toFixed(2)} />
+                </View>
+              </TouchableOpacity>
+            ))}
+          </View>
         </ScrollView>
         <View style={{paddingHorizontal:16, width:'100%'}}>
         <Button
@@ -206,25 +214,24 @@ const styles = StyleSheet.create({
   chartTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    paddingTop:12
+    paddingTop: 12,
   },
   cardContent: {
     color: '#00848c',
-    display: "flex",
-    flexDirection: "row",
+    display: 'flex',
+    flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 14,
-    paddingVertical:10,
-    justifyContent:'space-between'
+    paddingVertical: 10,
+    justifyContent: 'space-between',
   },
-card: {
-  backgroundColor: 'white',
-  marginBottom:14
-},
-cardTitle: {
-  color: '#00848c',
-  fontSize: 16,
-  paddingHorizontal: 4,
-
-},
+  card: {
+    backgroundColor: 'white',
+    marginBottom: 14,
+  },
+  cardTitle: {
+    color: '#00848c',
+    fontSize: 16,
+    paddingHorizontal: 4,
+  },
 });
