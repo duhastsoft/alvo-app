@@ -10,7 +10,8 @@ import { ActivityIndicator, Platform, StatusBar, StyleSheet, Text, TouchableOpac
 import { ScrollView } from 'react-native-gesture-handler';
 import GradesChart from '../components/charts/GradesChart';
 import Chip from '@/components/buttons/ChipTextOnly';
-
+import Alvo from '@/assets/images/trophy.png';
+import ScoresView from '@/components/ScoreswithImage';
 
 interface ExamRecord {
   startTime: Date;
@@ -57,9 +58,9 @@ export default class ResultsScreen extends Component<ResultProps, ResultsState> 
 
   get resultMessage() {
     const { params } = this.props.route;
-    if (params.score && params.score <= 5) return '¡Anímate! Sigue practicando';
-    else if (params.score && params.score <= 7) return '¡Puedes mejorar esa nota!';
-    else return '¡Lo hiciste muy bien!';
+    if (params.score && params.score <= 5) return {message:'¡Anímate! Sigue practicando',image:Alvo};
+    else if (params.score && params.score <= 7) return {message:'¡Puedes mejorar esa nota!',image:Alvo};
+    else return {message:'¡Lo hiciste muy bien!',image:Alvo};
   }
 
   get chartLabels() {
@@ -92,17 +93,14 @@ export default class ResultsScreen extends Component<ResultProps, ResultsState> 
   renderResult = () => {
     const { score, numberQuestions, correctAnswers } = this.props.route.params;
     return score && numberQuestions && correctAnswers ? (
-      <>
-        <Text style={styles.title}>Tu puntación:</Text>
-
-        <Text style={styles.scoreText}>{score?.toFixed(1)}</Text>
-
-        <Text
-          style={styles.subtitle}
-        >{`${correctAnswers}/${numberQuestions} respuestas correctas`}</Text>
-
-        <Text style={{ marginBottom: 24 }}>{this.resultMessage}</Text>
-      </>
+      <View styles={{backgroundColor:constants.colors.darkCyan}}>
+      <ScoresView
+        image={this.resultMessage.image}
+        message={this.resultMessage.message}
+        numberofanswers={`${correctAnswers}/${numberQuestions}`}
+        score={score?.toFixed(1)}
+      />
+      </View>
     ) : null;
   };
 
@@ -155,12 +153,14 @@ export default class ResultsScreen extends Component<ResultProps, ResultsState> 
           ))}
         </View>
         </ScrollView>
+        <View style={{paddingHorizontal:16, width:'100%'}}>
         <Button
           type={ButtonTypes.YELLOW}
           title={'Continuar'}
           onPressEvent={() => this.props.navigation.pop()}
           style={{ width: '100%', paddingHorizontal: 16 }}
         />
+        </View>
       </View>
     );
   }
@@ -172,7 +172,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     alignItems: 'center',
     paddingBottom: 16,
-    paddingHorizontal: 16,
+    //paddingHorizontal: 16,
     paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
   scroll: {
