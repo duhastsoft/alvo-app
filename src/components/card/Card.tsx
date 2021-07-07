@@ -1,3 +1,4 @@
+import constants from '@/constants';
 import React from 'react';
 import {
   Image,
@@ -39,10 +40,12 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     backgroundColor: '#fff',
     elevation: 4,
+    ...constants.styles.iosElevation4,
+    alignSelf: 'stretch'
   },
 
   cardTitle: {
-    color: '#00848c',
+    color: constants.colors.darkCyan,
     textAlign: 'center',
   },
 });

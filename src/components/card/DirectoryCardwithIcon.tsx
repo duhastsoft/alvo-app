@@ -33,6 +33,8 @@ export default class ServiceCategory extends React.Component<CardCategoryProps>{
             activeOpacity={0.8}
             >
                 <View style={styles.cardContent}>
+                    
+                <Icon name={icon.name} type={icon.type} size={24} color={icon.color} />
                     <Text style={styles.cardTitle}>{name}</Text>
                 </View>
             </TouchableOpacity>
@@ -47,7 +49,7 @@ const styles = StyleSheet.create({
       width: '100%',
     },
     cardTitle: {
-      color: 'black',
+      color: '#00848c',
       textAlign: 'left',
       flexBasis: '80%',
       fontSize:16,

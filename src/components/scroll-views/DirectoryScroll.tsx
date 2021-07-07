@@ -1,55 +1,103 @@
-import React from 'react';
-import {ImageSourcePropType, ScrollView, StyleProp, ViewStyle, StyleSheet} from 'react-native';
-import LoadingIcon from '@/assets/images/sand-clock-1.png';
+import React, { useEffect, useState } from 'react';
+import { ImageSourcePropType, ScrollView, StyleProp, ViewStyle, StyleSheet, View, SectionList, Text } from 'react-native';
 import ServiceCategory from '../card/DirectoryCard';
-
-interface DirectoryCard {
-    id: number;
-    name: string;
-}
-
+import Charging from '../card/DirectoryCardwithIcon';
+import constants from '@/constants';
+import {ServiceItem} from '@/constants/Directory'
 
 export interface DirectoryScrollProps {
-    image: ImageSourcePropType;
-    style?: StyleProp<ViewStyle>;
-    styleItems?: StyleProp<ViewStyle>;
-    onPressItem: (index: number) => void;
-    list: DirectoryCard[];
+  style?: StyleProp<ViewStyle>;
+  styleItems?: StyleProp<ViewStyle>;
+  onPressItem: (index: any) => void;
+  list: ServiceItem[];
+  header: boolean;
 }
 
-export default function DirectoryScroll(props: DirectoryScrollProps){
-    if(props.list.length<1){
-        return(<ScrollView style={[styles.row, props.style]}>
-            <ServiceCategory
-                    index={0} 
-                    key={0} 
-                    image={LoadingIcon} 
-                    name={'Nada que mostrar aquí'}
-                    style={props.styleItems}
-                    />
-        </ScrollView>)
-    }
-    return(
-        <ScrollView style={[styles.row, props.style]}>
-            {
-                props.list.map((option)=>(<ServiceCategory
-                    index={option.id} 
-                    key={option.id} 
-                    image={props.image} 
-                    name={option.name}
-                    onPress={props.onPressItem}
-                    style={props.styleItems}
-                    />))
-            }
-        </ScrollView>
-    )
-    
+interface HeaderData{	
+  title: string,	
+  data: ServiceItem[]
+}
+
+export default function DirectoryScroll(props: DirectoryScrollProps) {
+  const [itemList, setitemList] = useState<HeaderData[]>([]);	
+  const [didMount, setDidMount] = useState(false);  
+
+  const createList = async () => {	
+    let items: HeaderData[] = [];	
+    props.list.forEach(element=>{	
+        const letter = element.name.charAt(0).toUpperCase();	
+        const result = items.find( item => item.title === letter);	
+        const filterService : ServiceItem = element;
+        if(result){	
+          result.data.push(filterService);	
+        }	
+        else{	
+          items.push({title: letter, data: [filterService]});	
+        }	
+    });	
+    setitemList(items)	
+};
+
+  useEffect(() => {
+    setDidMount(true);
+    createList();
+  }, [props.list]);
+
+  if (props.list.length < 1 || !didMount) {
+    return (
+      <View style={styles.container}>
+        <Charging
+          id={'0'}
+          key={0}
+          name={'CARGANDO...'}
+          style={props.styleItems}
+          icon={{name:'timer-sand', type:'material-community',color:'gray'}}
+        />
+      </View>
+    );
+  }
+  return <View style={styles.container}>
+
+    <SectionList	          
+          sections={itemList}	          
+          renderItem={({ item }) => 	          
+              <ServiceCategory
+              key={item.id}
+              icon={{name:'toolbox', type:'material-community',color:'gray'}}
+              id={item.id}
+              name={item.name}
+              target={item}
+              onPress={props.onPressItem}
+            />
+          }	
+          renderSectionHeader={({ section }) => <Text	
+            style={styles.sectionHeader}>{section.title}</Text>}	
+          keyExtractor={(item, index) => item.name + index}	
+      />	
+  </View>
 }
 
 const styles = StyleSheet.create({
-    row: {
-        width: '100%',
-        flexDirection: 'row',
-        marginBottom: 16,
-      },
-})
+  container: {
+    width: '100%',
+    display: 'flex',
+    backgroundColor:'white'
+  },
+  sectionHeader: {
+    paddingVertical: 2,
+    paddingHorizontal: 14,
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: 'white',
+    backgroundColor: constants.colors.darkCyan,
+  },
+  itemS: {
+    padding: 10,
+    paddingHorizontal: 14,
+    fontSize: 18,
+    height: 44,
+    borderBottomWidth: 0.2,
+    borderBottomColor: '#cfd8dc',
+  },
+});
+
